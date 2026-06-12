@@ -1,0 +1,924 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --bg-primary: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --shopee-orange: #ee4d2d;
+  --ml-yellow: #fff159;
+  --ml-blue: #3483fa;
+  --whatsapp-green: #25d366;
+  --gradient-banner: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+  --gradient-header: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 90px; /* Space for the sticky footer */
+  overflow-x: hidden;
+}
+
+/* Header */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #ff4b2b;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+}
+
+/* Badge de Vídeo/Live no Centro */
+.header-center-video-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 40px;
+  padding: 12px 26px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+  overflow: hidden;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  z-index: 1;
+}
+
+.header-center-video-badge::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    #ff4b2b, #ff416c, #f09433, #ee4d2d, #3483fa, #ff4b2b
+  );
+  animation: rotate-gradient 3.5s linear infinite;
+  z-index: -2;
+}
+
+.header-center-video-badge::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  background: #ffffff;
+  border-radius: 37px;
+  z-index: -1;
+}
+
+@keyframes rotate-gradient {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.video-badge-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.live-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  display: inline-block;
+  animation: blink-live 1s infinite;
+}
+
+@keyframes blink-live {
+  0%, 100% { opacity: 0.2; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.live-text {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #ef4444;
+  letter-spacing: 0.5px;
+  margin-right: 4px;
+}
+
+.badge-logos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mini-logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  animation: float-logo 2s ease-in-out infinite alternate;
+}
+
+.badge-logos img:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes float-logo {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+.plus-icon {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.btn-vip-header {
+  background-color: var(--whatsapp-green);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-vip-header:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(37, 211, 102, 0.3);
+}
+
+/* Banner */
+.highlight-banner {
+  background: var(--gradient-banner);
+  color: white;
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.4;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 20px;
+}
+
+/* Audio Section (Stories Style) */
+.audio-section {
+  padding: 0 16px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.audio-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.stories-container {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.story-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  outline: none;
+}
+
+.story-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.2s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.story-btn:active .story-circle {
+  transform: scale(0.95);
+}
+
+.story-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.story-inner img {
+  width: 75%;
+  height: 75%;
+  object-fit: contain;
+}
+
+/* Wave Overlay / Play Icon */
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.play-overlay svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+
+.story-btn.playing .play-overlay {
+  background: rgba(37, 211, 102, 0.7);
+}
+
+/* Audio waves animation */
+.wave-anim {
+  display: none;
+  align-items: flex-end;
+  gap: 3px;
+  width: 24px;
+  height: 20px;
+}
+
+.story-btn.playing .wave-anim {
+  display: flex;
+}
+
+.story-btn.playing .play-icon {
+  display: none;
+}
+
+.wave-bar {
+  width: 3px;
+  height: 100%;
+  background-color: white;
+  border-radius: 3px;
+  animation: bounce 0.8s ease-in-out infinite alternate;
+}
+
+.wave-bar:nth-child(2) { animation-delay: 0.2s; }
+.wave-bar:nth-child(3) { animation-delay: 0.4s; }
+.wave-bar:nth-child(4) { animation-delay: 0.1s; }
+
+@keyframes bounce {
+  10% { height: 30%; }
+  100% { height: 100%; }
+}
+
+.story-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Main Container & Routing Display */
+.main-container {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+  flex: 1;
+}
+
+/* Single Product Highlight State */
+.highlight-mode {
+  padding-top: 10px;
+}
+
+.highlight-mode .section-title {
+  display: none;
+}
+
+.highlight-mode .highlight-badge-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  color: #b45309;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.highlight-mode .btn-all-products {
+  display: block;
+  text-align: center;
+  background-color: #e2e8f0;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 16px;
+  margin-bottom: 30px;
+  transition: background-color 0.2s;
+}
+
+.highlight-mode .btn-all-products:hover {
+  background-color: #cbd5e1;
+}
+
+.btn-all-products {
+  display: none;
+}
+
+.highlight-badge-msg {
+  display: none;
+}
+
+/* Feed Cards */
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+  color: var(--text-primary);
+}
+
+.feed-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card.focused {
+  border: 2px solid #3483fa;
+  box-shadow: 0 10px 25px rgba(52, 131, 250, 0.15);
+  transform: scale(1.02);
+}
+
+.product-card.focused::before {
+  content: '⚡ OFERTA DO ANÚNCIO';
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #3483fa;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  z-index: 10;
+  letter-spacing: 0.5px;
+}
+
+.img-container {
+  width: 100%;
+  position: relative;
+  padding-bottom: 100%; /* Perfect Square Ratio */
+  background-color: #f1f5f9;
+}
+
+.img-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.card-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.8rem;
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.stars {
+  color: #ffb703;
+}
+
+.price-box {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.price-old {
+  font-size: 0.8rem;
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.price-new {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+.price-new span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* CTA buttons */
+.btn-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+}
+
+.btn-cta:active {
+  transform: scale(0.98);
+}
+
+.btn-shopee {
+  background-color: var(--shopee-orange);
+  color: white;
+}
+
+.btn-shopee:hover {
+  box-shadow: 0 4px 12px rgba(238, 77, 45, 0.3);
+}
+
+.btn-mercadolivre {
+  background-color: var(--ml-yellow);
+  color: #2d3277;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.btn-mercadolivre:hover {
+  box-shadow: 0 4px 12px rgba(255, 241, 89, 0.4);
+}
+
+.btn-generic {
+  background-color: var(--ml-blue);
+  color: white;
+}
+
+.btn-generic:hover {
+  box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+}
+
+/* Sticky Footer */
+.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 6px 16px 10px 16px;
+  z-index: 100;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.trust-logos-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+}
+
+.trust-text {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.marketplace-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.mkt-logo {
+  height: 18px;
+  opacity: 0.75;
+  object-fit: contain;
+}
+
+.btn-whatsapp-vip {
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--whatsapp-green);
+  color: white;
+  padding: 11px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+  }
+}
+
+.admin-trigger {
+  position: fixed;
+  bottom: 110px; /* Just above the sticky footer */
+  left: 16px;
+  width: 45px;
+  height: 45px;
+  background-color: #1e293b;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  z-index: 99;
+  transition: transform 0.2s, background-color 0.2s;
+  user-select: none;
+}
+
+.admin-trigger:hover {
+  transform: scale(1.08);
+  background-color: #0f172a;
+}
+
+.admin-panel {
+  display: none;
+  background-color: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease-out;
+}
+
+.admin-panel.active {
+  display: block;
+}
+
+.admin-panel h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--ml-blue);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-admin-submit {
+  width: 100%;
+  background-color: var(--text-primary);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.btn-admin-submit:hover {
+  background-color: #0f172a;
+}
+
+.scrape-status {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 8px;
+  display: none;
+}
+
+/* Fallback Manual Form Container */
+.fallback-container {
+  display: none;
+  border-top: 1px dashed #cbd5e1;
+  margin-top: 16px;
+  padding-top: 16px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.fallback-container.active {
+  display: block;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hidden elements */
+.hidden {
+  display: none !important;
+}
+
+/* Recorte da logo enviada pelo usuário */
+.ml-logo-wrapper {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFF159; /* Fundo amarelo oficial do Mercado Livre */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  animation: float-logo 2s ease-in-out infinite alternate;
+}
+
+.ml-logo-cropped {
+  width: 170%; /* Amplia para focar apenas no ícone dos cotovelos/aperto de mão */
+  height: auto;
+  position: absolute;
+  top: -8%; /* Move o corte para cima removendo o texto 'mercado livre' inferior */
+}
+
+/* Ícone Flutuante do Mercado Livre no Botão de Compra */
+.btn-ml-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFF159;
+  border: 2px solid #2d3277; /* Borda escura oficial da marca para dar contraste */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Sombreamento para destacar */
+  margin-right: 8px;
+  flex-shrink: 0;
+  animation: float-btn-icon 1.5s ease-in-out infinite alternate;
+}
+
+/* Recorte específico do logo para o botão */
+.btn-ml-logo-cropped {
+  width: 155%; /* Amplia na proporção correta para o botão */
+  height: auto;
+  position: absolute;
+  top: -2%; /* Centraliza perfeitamente a imagem sem mostrar o texto de baixo */
+}
+
+/* Ícone Flutuante da Shopee no Botão de Compra */
+.btn-shopee-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  margin-right: 8px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+  animation: float-btn-icon 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes float-btn-icon {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-2px) scale(1.08); }
+}
+
+/* Ícones Flutuantes Laterais (Acompanham o Scroll) */
+.side-floating-icon {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.side-left {
+  left: 40px; /* Posicionado bem próximo à lateral esquerda da tela no desktop */
+}
+
+.side-right {
+  right: 40px; /* Posicionado bem próximo à lateral direita da tela no desktop */
+}
+
+.side-icon-inner {
+  width: 54px;
+  height: 54px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  border-radius: 50%;
+  animation: float-side-icon 2s ease-in-out infinite alternate;
+}
+
+.side-left .ml-logo-wrapper {
+  animation: float-side-icon 2s ease-in-out infinite alternate;
+  border: 1.5px solid #2d3277;
+}
+
+.side-icon-inner:hover {
+  transform: scale(1.12);
+}
+
+@keyframes float-side-icon {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+/* Adaptação dos ícones laterais para Mobile (telas estreitas) */
+@media (max-width: 640px) {
+  .side-left {
+    left: 8px; /* Cola na borda esquerda no celular */
+  }
+  .side-right {
+    right: 8px; /* Cola na borda direita no celular */
+  }
+  
+  .side-icon-inner {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .side-left .ml-logo-wrapper {
+    width: 38px !important;
+    height: 38px !important;
+  }
+}

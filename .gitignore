@@ -1,0 +1,6 @@
+node_modules/
+.system_generated/
+scratch/
+*.log
+.gemini/
+.git/
