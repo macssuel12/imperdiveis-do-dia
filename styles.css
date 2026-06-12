@@ -921,4 +921,35 @@ body {
     width: 38px !important;
     height: 38px !important;
   }
+
+  /* Otimização do Cabeçalho Fixo no Mobile */
+  .btn-vip-header {
+    display: none !important; /* Esconde o botão VIP do topo no celular (já existe o gigante no rodapé) */
+  }
+
+  .logo-text {
+    font-size: 1.15rem !important; /* Reduz tamanho da fonte do logo para não quebrar linha */
+  }
+
+  .header-center-video-badge {
+    padding: 6px 10px !important; /* Encolhe o tamanho do badge animado central */
+    border-width: 2px !important;
+  }
+
+  .live-text {
+    display: none !important; /* Oculta a palavra "OFERTAS" do badge para liberar espaço */
+  }
+
+  .mini-logo, .ml-logo-wrapper {
+    width: 28px !important;
+    height: 28px !important; /* Encolhe os mini-ícones de ML e Shopee no badge */
+  }
+  
+  .badge-logos {
+    gap: 6px !important;
+  }
+  
+  .plus-icon {
+    font-size: 0.9rem !important;
+  }
 }
