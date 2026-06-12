@@ -135,6 +135,59 @@ app.get('/api/scrape', async (req, res) => {
   }
 });
 
+// Endpoints do Banco de Dados de Produtos (Persistente no Servidor)
+const fs = require('fs');
+const PRODUCTS_FILE = path.join(__dirname, 'products.json');
+
+function readProductsFromFile() {
+  try {
+    if (!fs.existsSync(PRODUCTS_FILE)) {
+      fs.writeFileSync(PRODUCTS_FILE, JSON.stringify([]));
+    }
+    const data = fs.readFileSync(PRODUCTS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error('Erro ao ler arquivo de produtos:', err);
+    return [];
+  }
+}
+
+function writeProductsToFile(products) {
+  try {
+    fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2));
+  } catch (err) {
+    console.error('Erro ao salvar arquivo de produtos:', err);
+  }
+}
+
+app.get('/api/products', (req, res) => {
+  const products = readProductsFromFile();
+  res.json(products);
+});
+
+app.post('/api/products', (req, res) => {
+  const newProduct = req.body;
+  if (!newProduct || !newProduct.id || !newProduct.title) {
+    return res.status(400).json({ error: 'Dados de produto inválidos' });
+  }
+  const products = readProductsFromFile();
+  products.unshift(newProduct);
+  writeProductsToFile(products);
+  res.json({ success: true, product: newProduct });
+});
+
+app.delete('/api/products/:id', (req, res) => {
+  const id = req.params.id;
+  let products = readProductsFromFile();
+  const initialLength = products.length;
+  products = products.filter(p => p.id !== id);
+  if (products.length === initialLength) {
+    return res.status(404).json({ error: 'Produto não encontrado' });
+  }
+  writeProductsToFile(products);
+  res.json({ success: true });
+});
+
 app.listen(PORT, () => {
   console.log(`[Servidor] Rodando em http://localhost:${PORT}`);
 });

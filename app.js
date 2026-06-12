@@ -26,6 +26,7 @@ const btnSaveManual = document.getElementById('btn-save-manual');
 const successLinkBox = document.getElementById('success-link-box');
 const generatedLinkInput = document.getElementById('generated-link-input');
 const btnCopyLink = document.getElementById('btn-copy-link');
+const adminProductsList = document.getElementById('admin-products-list');
 
 // Variáveis de Controle
 let currentAudioBtn = null;
@@ -34,40 +35,26 @@ let audioContext = null;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-  initProducts();
   checkRouting();
   setupAudio();
   setupAdminPanel();
 });
 
-// Inicializa produtos no LocalStorage
-function initProducts() {
-  const products = localStorage.getItem('achadinhos_products');
-  if (!products) {
-    localStorage.setItem('achadinhos_products', JSON.stringify(INITIAL_PRODUCTS));
-  } else {
-    // Remove os produtos de amostra do cache local do navegador para manter apenas os reais (Creatina, etc.)
-    try {
-      const list = JSON.parse(products);
-      const sampleIds = ["jbl-wave-buds", "amazfit-bip-5", "airfryer-mondial"];
-      const filtered = list.filter(p => !sampleIds.includes(p.id));
-      if (list.length !== filtered.length) {
-        localStorage.setItem('achadinhos_products', JSON.stringify(filtered));
-      }
-    } catch (e) {
-      console.error("Erro ao migrar cache local:", e);
-    }
+// Função para carregar produtos do servidor
+async function getProducts() {
+  try {
+    const res = await fetch('/api/products');
+    if (!res.ok) throw new Error("Erro ao carregar");
+    return await res.json();
+  } catch (err) {
+    console.error("Erro de API de produtos:", err);
+    return [];
   }
 }
 
-// Retorna todos os produtos ativos
-function getProducts() {
-  return JSON.parse(localStorage.getItem('achadinhos_products')) || INITIAL_PRODUCTS;
-}
-
 // Renderiza a lista de produtos (aceita ID para destacar um único produto)
-function renderProducts(highlightId = null) {
-  const products = getProducts();
+async function renderProducts(highlightId = null) {
+  const products = await getProducts();
   feedContainer.innerHTML = '';
 
   if (highlightId) {
@@ -192,6 +179,7 @@ function checkRouting() {
       const password = prompt("Digite a senha de acesso ao Painel:");
       if (password === "201510,ma") {
         adminPanel.classList.add('active');
+        renderAdminProducts();
       } else {
         alert("Senha incorreta!");
       }
@@ -420,11 +408,23 @@ function setupAdminPanel() {
   });
 }
 
-function saveNewProduct(product) {
-  const products = getProducts();
-  products.unshift(product); // Adiciona no início da lista
-  localStorage.setItem('achadinhos_products', JSON.stringify(products));
-  checkRouting();
+async function saveNewProduct(product) {
+  try {
+    const response = await fetch('/api/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(product)
+    });
+    if (!response.ok) throw new Error("Erro ao salvar no servidor");
+    
+    await renderProducts();
+    renderAdminProducts();
+  } catch (err) {
+    console.error(err);
+    alert("Falha ao salvar o produto no servidor remoto.");
+  }
 }
 
 function resetAdminForm() {
@@ -435,9 +435,59 @@ function resetAdminForm() {
   generatedLinkInput.value = '';
 }
 
+// Renderiza a lista de gerenciamento e exclusão de produtos
+async function renderAdminProducts() {
+  const products = await getProducts();
+  adminProductsList.innerHTML = '';
+  
+  if (products.length === 0) {
+    adminProductsList.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; margin: 10px 0;">Nenhum produto cadastrado ainda.</p>`;
+    return;
+  }
+  
+  products.forEach(product => {
+    const item = document.createElement('div');
+    item.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; gap: 10px;";
+    item.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+        <img src="${product.image}" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex-shrink: 0; border: 1px solid #cbd5e1;">
+        <span style="font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">${product.title}</span>
+      </div>
+      <button class="btn-delete-prod" data-id="${product.id}" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background 0.2s; flex-shrink: 0;">Excluir</button>
+    `;
+    adminProductsList.appendChild(item);
+  });
+  
+  // Associa eventos de exclusão aos botões
+  adminProductsList.querySelectorAll('.btn-delete-prod').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-id');
+      if (confirm("Deseja realmente excluir este produto do site permanentemente?")) {
+        await deleteProduct(id);
+      }
+    });
+  });
+}
+
+// Remove o produto chamando a API do servidor
+async function deleteProduct(id) {
+  try {
+    const response = await fetch(`/api/products/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error("Falha ao excluir no servidor");
+    
+    await renderProducts();
+    renderAdminProducts();
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao excluir o produto no servidor.");
+  }
+}
+
 // Filtro por Marketplace ao clicar nas laterais
-window.filterMarketplace = function(type) {
-  const products = getProducts();
+window.filterMarketplace = async function(type) {
+  const products = await getProducts();
   const filtered = products.filter(p => p.marketplace === type);
   
   feedContainer.innerHTML = '';
