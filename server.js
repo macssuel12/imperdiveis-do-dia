@@ -188,6 +188,20 @@ app.delete('/api/products/:id', (req, res) => {
   res.json({ success: true });
 });
 
+app.put('/api/products/:id', (req, res) => {
+  const id = req.params.id;
+  const updatedData = req.body;
+  const products = readProductsFromFile();
+  const index = products.findIndex(p => p.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: 'Produto não encontrado' });
+  }
+  // Preserva o ID original e mescla os dados atualizados
+  products[index] = { ...products[index], ...updatedData, id };
+  writeProductsToFile(products);
+  res.json({ success: true, product: products[index] });
+});
+
 app.listen(PORT, () => {
   console.log(`[Servidor] Rodando em http://localhost:${PORT}`);
 });

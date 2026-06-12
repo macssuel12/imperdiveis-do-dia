@@ -32,6 +32,7 @@ const adminProductsList = document.getElementById('admin-products-list');
 let currentAudioBtn = null;
 let synthesisInterval = null;
 let audioContext = null;
+let editingProductId = null;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
@@ -351,7 +352,7 @@ function setupAdminPanel() {
     }
   });
 
-  // Salvar manual
+  // Salvar manual / Atualizar
   btnSaveManual.addEventListener('click', () => {
     const title = document.getElementById('manual-title').value.trim();
     const image = document.getElementById('manual-image').value.trim() || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=60';
@@ -365,27 +366,26 @@ function setupAdminPanel() {
       return;
     }
 
-    const newProduct = {
-      id: "prod-" + Date.now(),
+    const productData = {
       title: title,
       image: image,
-      rating: 4.5 + Math.random() * 0.5,
-      reviews: Math.floor(50 + Math.random() * 200),
       priceOld: priceOld,
       priceNew: priceNew,
       marketplace: marketplace,
       affiliateUrl: affiliateUrl
     };
 
-    saveNewProduct(newProduct);
-    
-    scrapeStatus.style.color = '#10b981';
-    scrapeStatus.textContent = "✅ Produto cadastrado manualmente com sucesso!";
-    
-    // Gera o link para tráfego pago
-    const generatedLink = window.location.origin + '/?p=' + newProduct.id;
-    generatedLinkInput.value = generatedLink;
-    successLinkBox.style.display = 'block';
+    if (editingProductId) {
+      updateProduct(editingProductId, productData);
+    } else {
+      const newProduct = {
+        id: "prod-" + Date.now(),
+        rating: 4.5 + Math.random() * 0.5,
+        reviews: Math.floor(50 + Math.random() * 200),
+        ...productData
+      };
+      saveNewProduct(newProduct);
+    }
   });
 
   // Evento de copiar o link do tráfego pago
@@ -419,6 +419,14 @@ async function saveNewProduct(product) {
     });
     if (!response.ok) throw new Error("Erro ao salvar no servidor");
     
+    scrapeStatus.style.color = '#10b981';
+    scrapeStatus.textContent = "✅ Produto cadastrado com sucesso!";
+    
+    // Gera o link para tráfego pago
+    const generatedLink = window.location.origin + '/?p=' + product.id;
+    generatedLinkInput.value = generatedLink;
+    successLinkBox.style.display = 'block';
+
     await renderProducts();
     renderAdminProducts();
   } catch (err) {
@@ -427,12 +435,83 @@ async function saveNewProduct(product) {
   }
 }
 
+async function updateProduct(id, updatedData) {
+  try {
+    const response = await fetch(`/api/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updatedData)
+    });
+    if (!response.ok) throw new Error("Erro ao atualizar no servidor");
+    
+    scrapeStatus.style.color = '#10b981';
+    scrapeStatus.textContent = "✅ Produto editado com sucesso!";
+    
+    // Gera o link para tráfego pago
+    const generatedLink = window.location.origin + '/?p=' + id;
+    generatedLinkInput.value = generatedLink;
+    successLinkBox.style.display = 'block';
+
+    // Limpa estado de edição
+    editingProductId = null;
+    btnSaveManual.textContent = "💾 Salvar Produto Manualmente";
+    const warningText = fallbackForm.querySelector('p');
+    if (warningText) {
+      warningText.innerHTML = `⚠️ Não foi possível extrair dados automaticamente. Por favor, insira os dados manualmente:`;
+      warningText.style.color = '#b45309';
+    }
+
+    await renderProducts();
+    renderAdminProducts();
+  } catch (err) {
+    console.error(err);
+    alert("Falha ao atualizar o produto no servidor.");
+  }
+}
+
+async function startEditingProduct(id) {
+  const products = await getProducts();
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+
+  editingProductId = id;
+  
+  // Preenche os campos do formulário
+  document.getElementById('manual-title').value = product.title;
+  document.getElementById('manual-image').value = product.image;
+  document.getElementById('manual-price-old').value = product.priceOld || '';
+  document.getElementById('manual-price-new').value = product.priceNew;
+  document.getElementById('manual-marketplace').value = product.marketplace;
+  affiliateUrlInput.value = product.affiliateUrl;
+
+  // Ativa a área manual e rola para ela
+  fallbackForm.classList.add('active');
+  const warningText = fallbackForm.querySelector('p');
+  if (warningText) {
+    warningText.innerHTML = `📝 <strong>Modo Edição:</strong> Editando o produto "${product.title}"`;
+    warningText.style.color = '#3b82f6';
+  }
+  btnSaveManual.textContent = "💾 Atualizar Produto";
+  
+  // Rola o formulário de cadastro para visualização
+  adminPanel.scrollTop = 0;
+}
+
 function resetAdminForm() {
   addProductForm.reset();
   scrapeStatus.style.display = 'none';
   fallbackForm.classList.remove('active');
   successLinkBox.style.display = 'none';
   generatedLinkInput.value = '';
+  editingProductId = null;
+  btnSaveManual.textContent = "💾 Salvar Produto Manualmente";
+  const warningText = fallbackForm.querySelector('p');
+  if (warningText) {
+    warningText.innerHTML = `⚠️ Não foi possível extrair dados automaticamente. Por favor, insira os dados manualmente:`;
+    warningText.style.color = '#b45309';
+  }
 }
 
 // Renderiza a lista de gerenciamento e exclusão de produtos
@@ -453,12 +532,22 @@ async function renderAdminProducts() {
         <img src="${product.image}" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex-shrink: 0; border: 1px solid #cbd5e1;">
         <span style="font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">${product.title}</span>
       </div>
-      <button class="btn-delete-prod" data-id="${product.id}" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background 0.2s; flex-shrink: 0;">Excluir</button>
+      <div style="display: flex; gap: 4px; flex-shrink: 0;">
+        <button class="btn-edit-prod" data-id="${product.id}" style="background: #3b82f6; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">Editar</button>
+        <button class="btn-delete-prod" data-id="${product.id}" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: background 0.2s;">Excluir</button>
+      </div>
     `;
     adminProductsList.appendChild(item);
   });
   
-  // Associa eventos de exclusão aos botões
+  // Associa eventos aos botões
+  adminProductsList.querySelectorAll('.btn-edit-prod').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      startEditingProduct(id);
+    });
+  });
+
   adminProductsList.querySelectorAll('.btn-delete-prod').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.getAttribute('data-id');
