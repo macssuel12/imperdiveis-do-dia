@@ -135,71 +135,145 @@ app.get('/api/scrape', async (req, res) => {
   }
 });
 
-// Endpoints do Banco de Dados de Produtos (Persistente no Servidor)
-const fs = require('fs');
-const PRODUCTS_FILE = path.join(__dirname, 'products.json');
+// Integração com o Banco de Dados do Supabase
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nxxtfvvieosnmfajhdp.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_tr1tJzD83vyq3HkXyevJAQ_XMaKquyE';
 
-function readProductsFromFile() {
+app.get('/api/products', async (req, res) => {
   try {
-    if (!fs.existsSync(PRODUCTS_FILE)) {
-      fs.writeFileSync(PRODUCTS_FILE, JSON.stringify([]));
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro Supabase: ${response.statusText}`);
     }
-    const data = fs.readFileSync(PRODUCTS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    console.error('Erro ao ler arquivo de produtos:', err);
-    return [];
-  }
-}
 
-function writeProductsToFile(products) {
-  try {
-    fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2));
-  } catch (err) {
-    console.error('Erro ao salvar arquivo de produtos:', err);
-  }
-}
+    const data = await response.json();
+    
+    // Mapeia colunas snake_case para propriedades camelCase esperadas no frontend
+    const products = data.map(p => ({
+      id: p.id,
+      title: p.title,
+      image: p.image,
+      rating: p.rating ? parseFloat(p.rating) : 5.0,
+      reviews: p.reviews ? parseInt(p.reviews, 10) : 100,
+      priceOld: p.price_old ? parseFloat(p.price_old) : null,
+      priceNew: p.price_new ? parseFloat(p.price_new) : 0,
+      marketplace: p.marketplace,
+      affiliateUrl: p.affiliate_url
+    }));
 
-app.get('/api/products', (req, res) => {
-  const products = readProductsFromFile();
-  res.json(products);
+    res.json(products);
+  } catch (err) {
+    console.error('Erro ao buscar produtos do Supabase:', err);
+    res.status(500).json({ error: 'Erro ao carregar produtos do banco de dados' });
+  }
 });
 
-app.post('/api/products', (req, res) => {
+app.post('/api/products', async (req, res) => {
   const newProduct = req.body;
   if (!newProduct || !newProduct.id || !newProduct.title) {
     return res.status(400).json({ error: 'Dados de produto inválidos' });
   }
-  const products = readProductsFromFile();
-  products.unshift(newProduct);
-  writeProductsToFile(products);
-  res.json({ success: true, product: newProduct });
-});
 
-app.delete('/api/products/:id', (req, res) => {
-  const id = req.params.id;
-  let products = readProductsFromFile();
-  const initialLength = products.length;
-  products = products.filter(p => p.id !== id);
-  if (products.length === initialLength) {
-    return res.status(404).json({ error: 'Produto não encontrado' });
+  try {
+    // Mapeia propriedades camelCase para colunas snake_case do Supabase
+    const dbProduct = {
+      id: newProduct.id,
+      title: newProduct.title,
+      image: newProduct.image,
+      rating: newProduct.rating,
+      reviews: newProduct.reviews,
+      price_old: newProduct.priceOld,
+      price_new: newProduct.priceNew,
+      marketplace: newProduct.marketplace,
+      affiliate_url: newProduct.affiliateUrl
+    };
+
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/products`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(dbProduct)
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Erro Supabase POST: ${errText}`);
+    }
+
+    res.json({ success: true, product: newProduct });
+  } catch (err) {
+    console.error('Erro ao salvar produto no Supabase:', err);
+    res.status(500).json({ error: 'Erro ao salvar produto no banco de dados' });
   }
-  writeProductsToFile(products);
-  res.json({ success: true });
 });
 
-app.put('/api/products/:id', (req, res) => {
+app.delete('/api/products/:id', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro Supabase DELETE: ${response.statusText}`);
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erro ao excluir produto no Supabase:', err);
+    res.status(500).json({ error: 'Erro ao excluir produto do banco de dados' });
+  }
+});
+
+app.put('/api/products/:id', async (req, res) => {
   const id = req.params.id;
   const updatedData = req.body;
-  const products = readProductsFromFile();
-  const index = products.findIndex(p => p.id === id);
-  if (index === -1) {
-    return res.status(404).json({ error: 'Produto não encontrado' });
+
+  try {
+    const dbUpdate = {};
+    if (updatedData.title !== undefined) dbUpdate.title = updatedData.title;
+    if (updatedData.image !== undefined) dbUpdate.image = updatedData.image;
+    if (updatedData.priceOld !== undefined) dbUpdate.price_old = updatedData.priceOld;
+    if (updatedData.priceNew !== undefined) dbUpdate.price_new = updatedData.priceNew;
+    if (updatedData.marketplace !== undefined) dbUpdate.marketplace = updatedData.marketplace;
+    if (updatedData.affiliateUrl !== undefined) dbUpdate.affiliate_url = updatedData.affiliateUrl;
+
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(dbUpdate)
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Erro Supabase PATCH: ${errText}`);
+    }
+
+    res.json({ success: true, product: updatedData });
+  } catch (err) {
+    console.error('Erro ao atualizar produto no Supabase:', err);
+    res.status(500).json({ error: 'Erro ao atualizar produto no banco de dados' });
   }
-  // Preserva o ID original e mescla os dados atualizados
-  products[index] = { ...products[index], ...updatedData, id };
-  writeProductsToFile(products);
-  res.json({ success: true, product: products[index] });
 });
 
 app.listen(PORT, () => {
