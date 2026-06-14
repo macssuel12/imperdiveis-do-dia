@@ -126,7 +126,10 @@ function createProductCard(product, isFocused) {
   } else if (product.marketplace === 'mercadolivre') {
     ctaHtml = `
       <div class="ml-cta-container">
-        <div class="click-here-arrow">👇 CLIQUE AQUI PARA COMPRAR 👇</div>
+        <div class="click-here-text" style="font-size:0.8rem; font-weight:800; color:#ff0000;">CLIQUE PARA COMPRAR</div>
+        <svg class="marketing-arrow" viewBox="0 0 24 24" width="35" height="35" fill="none" stroke="#ff0000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18m0 0l-6-6m6 6l6-6" />
+        </svg>
         <a href="${product.affiliateUrl}" class="btn-cta btn-mercadolivre" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
           <div class="btn-ml-icon-wrapper">
             <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">

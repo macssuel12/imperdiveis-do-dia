@@ -964,12 +964,10 @@ body {
   width: 100%;
 }
 
-.click-here-arrow {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #ff0000;
+.marketing-arrow {
   animation: bounceArrow 0.8s infinite alternate;
   margin-bottom: 2px;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
 }
 
 @keyframes bounceArrow {
