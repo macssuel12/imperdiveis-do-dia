@@ -448,7 +448,7 @@ body {
 .img-container {
   width: 100%;
   position: relative;
-  padding-bottom: 100%; /* Perfect Square Ratio */
+  padding-bottom: 70%; /* Shorter ratio to fit above the fold */
   background-color: #f1f5f9;
 }
 
@@ -463,7 +463,7 @@ body {
 }
 
 .card-info {
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -1008,4 +1008,109 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
+}
+
+/* CRO Improvements */
+.hot-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ef4444;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
+  animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.coupon-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.coupon-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.btn-copy-coupon {
+  background-color: transparent;
+  border: 1px solid #cbd5e1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy-coupon:hover {
+  background-color: #e2e8f0;
+}
+
+.social-proof-reviews {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.review-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.reviewer-avatar {
+  font-size: 1.2rem;
+  background-color: #f1f5f9;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewer-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.verified-buyer {
+  color: #10b981;
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+.review-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  margin-top: 2px;
 }

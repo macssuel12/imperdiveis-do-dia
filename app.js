@@ -148,6 +148,7 @@ function createProductCard(product, isFocused) {
 
   card.innerHTML = `
     <div class="img-container">
+      <div class="hot-tag">🔥 OFERTA QUENTE</div>
       <img src="${product.image}" alt="${product.title}" loading="lazy">
     </div>
     <div class="card-info">
@@ -160,10 +161,27 @@ function createProductCard(product, isFocused) {
         ${formattedOldPrice ? `<span class="price-old">${formattedOldPrice}</span>` : ''}
         <span class="price-new"><span>Por apenas:</span> R$ ${formattedNewPrice}</span>
       </div>
+      
+      <div class="coupon-box">
+        <span class="coupon-text">🎟️ Cupom aplicado: <strong>FRETEGRATIS</strong></span>
+        <button class="btn-copy-coupon" onclick="copyCoupon(this, 'FRETEGRATIS')">✂️ Copiar</button>
+      </div>
+
       ${ctaHtml}
+      
       <div class="trust-badges">
         <div class="trust-badge">🔒 Ambiente 100% Seguro</div>
         <div class="trust-badge">✅ Redirecionamento oficial: ${product.marketplace === 'mercadolivre' ? 'Mercado Livre' : (product.marketplace === 'shopee' ? 'Shopee' : 'Loja Oficial')}</div>
+      </div>
+
+      <div class="social-proof-reviews">
+        <div class="review-item">
+          <div class="reviewer-avatar">👩</div>
+          <div class="review-content">
+            <span class="reviewer-name">Maria Silva <span class="verified-buyer">✓ Compra Verificada</span></span>
+            <span class="review-text">Chegou muito rápido e bem embalado, recomendo! ✨</span>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -626,3 +644,20 @@ window.filterMarketplace = async function(type) {
   // Rolar suavemente para o início da lista
   feedContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
+
+// Global helper for coupon copy
+window.copyCoupon = function(btnElement, code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const originalText = btnElement.innerHTML;
+    btnElement.innerHTML = '? Copiado!';
+    btnElement.style.backgroundColor = '#10b981';
+    btnElement.style.color = '#fff';
+    setTimeout(() => {
+      btnElement.innerHTML = originalText;
+      btnElement.style.backgroundColor = '';
+      btnElement.style.color = '';
+    }, 2000);
+  }).catch(err => {
+    console.error('Erro ao copiar cupom', err);
+  });
+}
