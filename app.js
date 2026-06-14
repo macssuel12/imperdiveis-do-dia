@@ -275,8 +275,8 @@ function setupAudio() {
       });
   };
 
-  btnAudioMl.addEventListener('click', () => handleAudioClick(btnAudioMl, 'ml'));
-  btnAudioShopee.addEventListener('click', () => handleAudioClick(btnAudioShopee, 'shopee'));
+  if (btnAudioMl) btnAudioMl.addEventListener('click', () => handleAudioClick(btnAudioMl, 'ml'));
+  if (btnAudioShopee) btnAudioShopee.addEventListener('click', () => handleAudioClick(btnAudioShopee, 'shopee'));
 
   globalAudio.addEventListener('ended', stopAllAudio);
 }
