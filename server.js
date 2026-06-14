@@ -276,6 +276,38 @@ app.put('/api/products/:id', async (req, res) => {
   }
 });
 
+app.post('/api/notify', async (req, res) => {
+  const { title, marketplace } = req.body;
+  const BOT_TOKEN = '8964111436:AAGKyEFDzXVDZ8HoVUuVRHr_em2VKG83kww';
+  const CHAT_ID = '8678433868';
+  
+  if (!title) return res.status(400).json({ error: 'Title is required' });
+
+  const text = `🔔 *Novo Clique!*\n\n📦 *Produto:* ${title}\n🛒 *Loja:* ${marketplace || 'Não especificada'}`;
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: text,
+        parse_mode: 'Markdown'
+      })
+    });
+    
+    if (!response.ok) {
+      console.error('Telegram API Error:', await response.text());
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erro ao enviar notificacao telegram:', err);
+    res.status(500).json({ error: 'Failed to send notification' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`[Servidor] Rodando em http://localhost:${PORT}`);
 });

@@ -103,18 +103,19 @@ function createProductCard(product, isFocused) {
 
   const formattedOldPrice = product.priceOld ? `De: R$ ${product.priceOld.toFixed(2).replace('.', ',')}` : '';
   const formattedNewPrice = product.priceNew.toFixed(2).replace('.', ',');
+  const titleEncoded = encodeURIComponent(product.title);
 
   let ctaHtml = '';
   if (product.marketplace === 'shopee') {
     ctaHtml = `
-      <a href="${product.affiliateUrl}" class="btn-cta btn-shopee" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}')">
+      <a href="${product.affiliateUrl}" class="btn-cta btn-shopee" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
         <img class="btn-shopee-icon" src="https://img.icons8.com/color/100/shopee.png" alt="Shopee">
         VER PREÇO NA SHOPEE
       </a>
     `;
   } else if (product.marketplace === 'mercadolivre') {
     ctaHtml = `
-      <a href="${product.affiliateUrl}" class="btn-cta btn-mercadolivre" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}')">
+      <a href="${product.affiliateUrl}" class="btn-cta btn-mercadolivre" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
         <div class="btn-ml-icon-wrapper">
           <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
         </div>
@@ -123,7 +124,7 @@ function createProductCard(product, isFocused) {
     `;
   } else {
     ctaHtml = `
-      <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}')">
+      <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
         🛒 VER PREÇO NA LOJA
       </a>
     `;
@@ -151,7 +152,7 @@ function createProductCard(product, isFocused) {
 }
 
 // Rastreamento de cliques no pixel
-window.trackCtaClick = function(productId, marketplace) {
+window.trackCtaClick = function(productId, marketplace, titleEncoded) {
   if (typeof fbq === 'function') {
     fbq('track', 'AddToCart', {
       content_ids: [productId],
@@ -159,6 +160,15 @@ window.trackCtaClick = function(productId, marketplace) {
       content_category: marketplace
     });
   }
+  
+  const title = titleEncoded ? decodeURIComponent(titleEncoded) : productId;
+  
+  // Enviar notificação Telegram em segundo plano
+  fetch('/api/notify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, marketplace })
+  }).catch(err => console.error('Notify error:', err));
 };
 
 // Roteamento dinâmico
