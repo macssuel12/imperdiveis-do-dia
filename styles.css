@@ -625,10 +625,10 @@ body {
   max-width: 450px;
   background-color: var(--whatsapp-green);
   color: white;
-  padding: 11px;
+  padding: 8px;
   border-radius: 30px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   text-decoration: none;
   display: flex;
   align-items: center;

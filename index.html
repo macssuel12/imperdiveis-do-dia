@@ -70,56 +70,8 @@
     🔥 As melhores ofertas da internet com estoque real e cupons de frete grátis!
   </div>
 
-  <!-- Seção Interativa de Áudios -->
-  <section class="audio-section">
-    <h3>🎙️ Ouça os Recados e Ofertas do Dia</h3>
-    <div class="stories-container">
-      
-      <!-- Botão Mercado Livre -->
-      <button class="story-btn" id="btn-audio-ml" aria-label="Ouvir ofertas do Mercado Livre">
-        <div class="story-circle">
-          <div class="story-inner">
-            <!-- ML Mini Icon Realista (Arquivo Enviado Pelo Usuário) -->
-            <div class="ml-logo-wrapper" style="width: 100%; height: 100%; animation: none; border: none; box-shadow: none;">
-              <img class="ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
-            </div>
-            <!-- Wave Overlay / Play Icon -->
-            <div class="play-overlay">
-              <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-              <div class="wave-anim">
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <span class="story-text">Ouvir ML</span>
-      </button>
-
-      <!-- Botão Shopee -->
-      <button class="story-btn" id="btn-audio-shopee" aria-label="Ouvir ofertas da Shopee">
-        <div class="story-circle">
-          <div class="story-inner">
-            <!-- Shopee Logo Realista (CDN Oficial) -->
-            <img src="https://img.icons8.com/color/100/shopee.png" alt="Shopee" style="width: 44px; height: 44px; object-fit: contain;">
-            <!-- Wave Overlay / Play Icon -->
-            <div class="play-overlay">
-              <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-              <div class="wave-anim">
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <span class="story-text">Ouvir Shopee</span>
-      </button>
-
-    </div>
+  <!-- Seção Interativa de Áudios (Ocultada a pedido) -->
+  <section class="audio-section" style="display: none;">
   </section>
 
   <!-- Player Invisível Global -->
@@ -252,16 +204,16 @@
     </a>
   </footer>
 
-  <!-- Ícones Flutuantes Laterais (Acompanham o Scroll) -->
-  <a href="#" class="side-floating-icon side-left" onclick="filterMarketplace('mercadolivre'); return false;" title="Filtrar Mercado Livre">
-    <div class="ml-logo-wrapper side-icon-inner">
-      <img class="ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
+  <!-- Selos de Confiança no Fim da Página -->
+  <div class="site-trust-footer" style="text-align: center; padding: 20px 10px 80px 10px; background: #fff; margin-top: 20px; border-top: 1px solid #eee;">
+    <p style="font-size: 0.85rem; font-weight: 700; color: #475569; margin-bottom: 10px;">COMPRA SEGURA E GARANTIDA</p>
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; align-items: center;">
+      <img src="https://img.shields.io/badge/Site%20Seguro-100%25%20Protegido-success?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Site Seguro" style="height: 25px;">
+      <img src="https://img.shields.io/badge/Compra-Garantida-blue?style=for-the-badge&logo=mercadopago&logoColor=white" alt="Compra Garantida" style="height: 25px;">
+      <img src="https://img.shields.io/badge/Reclame-Aqui_Otimizado-00a859?style=for-the-badge" alt="Reclame Aqui" style="height: 25px;">
     </div>
-  </a>
-  
-  <a href="#" class="side-floating-icon side-right" onclick="filterMarketplace('shopee'); return false;" title="Filtrar Shopee">
-    <img class="side-icon-inner" src="https://img.icons8.com/color/100/shopee.png" alt="Shopee">
-  </a>
+    <p style="font-size: 0.7rem; color: #94a3b8; margin-top: 15px;">Os pagamentos e entregas são processados diretamente pelas plataformas oficiais.</p>
+  </div>
 
   <!-- Lógica Principal -->
   <script src="app.js"></script>

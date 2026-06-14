@@ -163,7 +163,7 @@ function createProductCard(product, isFocused) {
       ${ctaHtml}
       <div class="trust-badges">
         <div class="trust-badge">🔒 Ambiente 100% Seguro</div>
-        <div class="trust-badge">✅ Redirecionamento para a loja oficial</div>
+        <div class="trust-badge">✅ Redirecionamento oficial: ${product.marketplace === 'mercadolivre' ? 'Mercado Livre' : (product.marketplace === 'shopee' ? 'Shopee' : 'Loja Oficial')}</div>
       </div>
     </div>
   `;
