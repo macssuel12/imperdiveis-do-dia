@@ -161,6 +161,10 @@ function createProductCard(product, isFocused) {
         <span class="price-new"><span>Por apenas:</span> R$ ${formattedNewPrice}</span>
       </div>
       ${ctaHtml}
+      <div class="trust-badges">
+        <div class="trust-badge">🔒 Ambiente 100% Seguro</div>
+        <div class="trust-badge">✅ Redirecionamento para a loja oficial</div>
+      </div>
     </div>
   `;
 
