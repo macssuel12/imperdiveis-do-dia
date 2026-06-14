@@ -556,11 +556,12 @@ body {
 .btn-mercadolivre {
   background-color: var(--ml-yellow);
   color: #2d3277;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(57, 255, 20, 0.4);
+  animation: floatNeon 2s infinite ease-in-out;
 }
 
 .btn-mercadolivre:hover {
-  box-shadow: 0 4px 12px rgba(255, 241, 89, 0.4);
+  box-shadow: 0 4px 12px rgba(57, 255, 20, 0.6), 0 0 20px rgba(57, 255, 20, 0.4);
 }
 
 .btn-generic {
@@ -951,5 +952,42 @@ body {
   
   .plus-icon {
     font-size: 0.9rem !important;
+  }
+}
+
+/* Custom Animations & ML Button CTA Container */
+.ml-cta-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.click-here-arrow {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ff0000;
+  animation: bounceArrow 0.8s infinite alternate;
+  margin-bottom: 2px;
+}
+
+@keyframes bounceArrow {
+  from { transform: translateY(0); }
+  to { transform: translateY(-5px); }
+}
+
+@keyframes floatNeon {
+  0% {
+    transform: translateY(0);
+    box-shadow: 0 0 5px rgba(57, 255, 20, 0.5), 0 0 10px rgba(57, 255, 20, 0.3);
+  }
+  50% {
+    transform: translateY(-4px);
+    box-shadow: 0 0 15px rgba(57, 255, 20, 0.8), 0 0 25px rgba(57, 255, 20, 0.5);
+  }
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 0 5px rgba(57, 255, 20, 0.5), 0 0 10px rgba(57, 255, 20, 0.3);
   }
 }

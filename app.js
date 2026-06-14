@@ -125,12 +125,15 @@ function createProductCard(product, isFocused) {
     `;
   } else if (product.marketplace === 'mercadolivre') {
     ctaHtml = `
-      <a href="${product.affiliateUrl}" class="btn-cta btn-mercadolivre" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
-        <div class="btn-ml-icon-wrapper">
-          <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
-        </div>
-        VER NO MERCADO LIVRE
-      </a>
+      <div class="ml-cta-container">
+        <div class="click-here-arrow">👇 CLIQUE AQUI PARA COMPRAR 👇</div>
+        <a href="${product.affiliateUrl}" class="btn-cta btn-mercadolivre" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
+          <div class="btn-ml-icon-wrapper">
+            <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
+          </div>
+          VER NO MERCADO LIVRE
+        </a>
+      </div>
     `;
   } else {
     ctaHtml = `
