@@ -277,13 +277,18 @@ app.put('/api/products/:id', async (req, res) => {
 });
 
 app.post('/api/notify', async (req, res) => {
-  const { title, marketplace } = req.body;
+  const { type, title, marketplace } = req.body;
   const BOT_TOKEN = '8964111436:AAGKyEFDzXVDZ8HoVUuVRHr_em2VKG83kww';
   const CHAT_ID = '8678433868';
   
-  if (!title) return res.status(400).json({ error: 'Title is required' });
-
-  const text = `🔔 *Novo Clique!*\n\n📦 *Produto:* ${title}\n🛒 *Loja:* ${marketplace || 'Não especificada'}`;
+  let text = '';
+  
+  if (type === 'visit') {
+    text = `👀 *Novo Visitante!*\nAlguém acabou de entrar no seu site.`;
+  } else {
+    if (!title) return res.status(400).json({ error: 'Title is required' });
+    text = `🔔 *Novo Clique!*\n\n📦 *Produto:* ${title}\n🛒 *Loja:* ${marketplace || 'Não especificada'}`;
+  }
 
   try {
     const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {

@@ -39,6 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
   checkRouting();
   setupAudio();
   setupAdminPanel();
+  
+  // Notificar visita (uma vez por sessão, e não se for admin)
+  if (!window.location.search.includes('admin=true') && !sessionStorage.getItem('visited')) {
+    sessionStorage.setItem('visited', 'true');
+    fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'visit' })
+    }).catch(err => console.error('Notify visit error:', err));
+  }
 });
 
 // Função para carregar produtos do servidor
