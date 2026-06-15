@@ -704,6 +704,6 @@ setInterval(() => {
     } else {
       sec--;
     }
-    el.textContent = ${min.toString().padStart(2, '0')}:;
+    el.textContent = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
   });
 }, 1000);
