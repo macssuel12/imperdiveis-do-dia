@@ -41,7 +41,7 @@ body {
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 12px 16px;
+  padding: 6px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1011,19 +1011,46 @@ body {
 }
 
 /* CRO Improvements */
+.card-header-badges {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px 6px 12px;
+  background-color: var(--card-bg);
+  border-bottom: 1px solid #f1f5f9;
+}
+
 .hot-tag {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #ef4444;
-  color: white;
-  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #fef2f2;
+  color: #ef4444;
+  padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 800;
-  z-index: 2;
-  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
-  animation: pulse-red 2s infinite;
+  border: 1px solid #fca5a5;
+  animation: pulse-red-light 2s infinite;
+}
+
+@keyframes pulse-red-light {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.countdown-timer {
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px dashed #ef4444;
 }
 
 @keyframes pulse-red {

@@ -147,8 +147,19 @@ function createProductCard(product, isFocused) {
   }
 
   card.innerHTML = `
+    <div class="card-header-badges">
+      <div class="hot-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#ef4444" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C12 2 8 6 8 11.5C8 15.5 10.5 18 12 22C13.5 18 16 15.5 16 11.5C16 6 12 2 12 2Z" />
+        </svg>
+        OFERTA QUENTE
+      </div>
+      <div class="countdown-timer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span class="time-left" data-minutes="15">14:59</span>
+      </div>
+    </div>
     <div class="img-container">
-      <div class="hot-tag">🔥 OFERTA QUENTE</div>
       <img src="${product.image}" alt="${product.title}" loading="lazy">
     </div>
     <div class="card-info">
@@ -661,3 +672,19 @@ window.copyCoupon = function(btnElement, code) {
     console.error('Erro ao copiar cupom', err);
   });
 }
+
+// Countdown Timer Logic
+setInterval(() => {
+  document.querySelectorAll('.time-left').forEach(el => {
+    let text = el.textContent;
+    let [min, sec] = text.split(':').map(Number);
+    if (min === 0 && sec === 0) return;
+    if (sec === 0) {
+      min--;
+      sec = 59;
+    } else {
+      sec--;
+    }
+    el.textContent = ${min.toString().padStart(2, '0')}:;
+  });
+}, 1000);
