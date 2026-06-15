@@ -166,16 +166,15 @@ function createProductCard(product, isFocused) {
   }
 
   card.innerHTML = `
-    <div class="card-header-badges">
-      <div class="hot-tag">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="#ef4444" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C12 2 8 6 8 11.5C8 15.5 10.5 18 12 22C13.5 18 16 15.5 16 11.5C16 6 12 2 12 2Z" />
+    <div class="flash-sale-banner">
+      <div class="flash-sale-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        OFERTA QUENTE
+        OFERTA RELÂMPAGO
       </div>
-      <div class="countdown-timer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        <span class="time-left" data-minutes="15">14:59</span>
+      <div class="flash-sale-timer">
+        Termina em: <span class="time-left">14:59</span>
       </div>
     </div>
     <div class="img-container">
