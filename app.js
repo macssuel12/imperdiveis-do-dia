@@ -128,10 +128,10 @@ async function renderProducts(highlightId = null) {
           // Dispara rastreamento no Pixel
           trackCtaClick(product.id, product.marketplace, encodeURIComponent(product.title));
           
-          // Aguarda 1.5 segundos (para passar credibilidade) e redireciona
+          // Aguarda 1 segundo (para passar credibilidade) e redireciona
           setTimeout(() => {
             window.location.href = product.affiliateUrl;
-          }, 1500);
+          }, 1000);
         };
 
         // Escuta qualquer clique ou toque na tela inteira
