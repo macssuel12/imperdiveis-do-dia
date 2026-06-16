@@ -34,21 +34,58 @@ let synthesisInterval = null;
 let audioContext = null;
 let editingProductId = null;
 
+// Variáveis Globais Geo e Spam
+window.userGeoData = { city: '', ip: '' };
+
+// Anti-Spam Check
+function checkAntiSpam() {
+  const banUntil = parseInt(localStorage.getItem('spamBanUntil') || '0');
+  if (Date.now() < banUntil) {
+    document.body.innerHTML = `
+      <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif; text-align: center; padding: 20px; background: #fff;">
+        <h1 style="color: #e11d48; font-size: 24px; margin-bottom: 10px;">Acesso Temporariamente Bloqueado</h1>
+        <p style="color: #64748b;">Detectamos atividades suspeitas (excesso de cliques).<br>Tente novamente mais tarde.</p>
+      </div>
+    `;
+    return true; // Is banned
+  } else if (banUntil > 0) {
+    localStorage.removeItem('spamBanUntil');
+    localStorage.setItem('spamClickCount', '0');
+  }
+  return false;
+}
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
+  if (checkAntiSpam()) return; // Stop if banned
+
+  // Buscar IP e Cidade
+  fetch('https://get.geojs.io/v1/ip/geo.json')
+    .then(r => r.json())
+    .then(data => {
+      window.userGeoData.city = data.city || data.region || 'Desconhecida';
+      window.userGeoData.ip = data.ip || 'Desconhecido';
+      
+      // Notificar visita
+      if (!window.location.search.includes('admin=true') && !sessionStorage.getItem('visited')) {
+        sessionStorage.setItem('visited', 'true');
+        fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'visit', ip: window.userGeoData.ip, city: window.userGeoData.city })
+        }).catch(() => {});
+      }
+    }).catch(err => {
+      // Fallback sem geo
+      if (!window.location.search.includes('admin=true') && !sessionStorage.getItem('visited')) {
+        sessionStorage.setItem('visited', 'true');
+        fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'visit' }) }).catch(() => {});
+      }
+    });
+
   checkRouting();
   setupAudio();
   setupAdminPanel();
-  
-  // Notificar visita (uma vez por sessão, e não se for admin)
-  if (!window.location.search.includes('admin=true') && !sessionStorage.getItem('visited')) {
-    sessionStorage.setItem('visited', 'true');
-    fetch('/api/notify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'visit' })
-    }).catch(err => console.error('Notify visit error:', err));
-  }
 });
 
 // Função para carregar produtos do servidor
@@ -246,8 +283,27 @@ function createProductCard(product, isFocused) {
   return card;
 }
 
-// Rastreamento de cliques no pixel
+// Rastreamento de cliques no pixel e Anti-Spam
 window.trackCtaClick = function(productId, marketplace, titleEncoded) {
+  // Lógica Anti-Spam
+  if (!window.location.search.includes('admin=true')) {
+    let clickCount = parseInt(localStorage.getItem('spamClickCount') || '0');
+    clickCount++;
+    localStorage.setItem('spamClickCount', clickCount);
+    
+    if (clickCount >= 20) {
+      localStorage.setItem('spamBanUntil', Date.now() + 20 * 60 * 1000); // Bane por 20 minutos
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'ban', ip: window.userGeoData.ip, city: window.userGeoData.city })
+      }).catch(e => {});
+      
+      location.reload();
+      return;
+    }
+  }
+
   if (typeof fbq === 'function') {
     fbq('track', 'AddToCart', {
       content_ids: [productId],
@@ -258,11 +314,16 @@ window.trackCtaClick = function(productId, marketplace, titleEncoded) {
   
   const title = titleEncoded ? decodeURIComponent(titleEncoded) : productId;
   
-  // Enviar notificação Telegram em segundo plano
+  // Enviar notificação Telegram em segundo plano com IP e Cidade
   fetch('/api/notify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, marketplace })
+    body: JSON.stringify({ 
+      title, 
+      marketplace,
+      ip: window.userGeoData?.ip,
+      city: window.userGeoData?.city
+    })
   }).catch(err => console.error('Notify error:', err));
 };
 

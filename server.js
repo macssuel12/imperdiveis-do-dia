@@ -277,17 +277,23 @@ app.put('/api/products/:id', async (req, res) => {
 });
 
 app.post('/api/notify', async (req, res) => {
-  const { type, title, marketplace } = req.body;
+  const { type, title, marketplace, ip, city } = req.body;
   const BOT_TOKEN = '8964111436:AAGKyEFDzXVDZ8HoVUuVRHr_em2VKG83kww';
   const CHAT_ID = '8678433868';
   
   let text = '';
+  const geoInfo = (city || ip) ? `\n📍 *Local:* ${city || 'Desconhecida'} (IP: ${ip || 'Desconhecido'})` : '';
   
   if (type === 'visit') {
-    text = `👀 *Novo Visitante!*\nAlguém acabou de entrar no seu site.`;
+    text = `👀 *Novo Visitante!*\nAlguém acabou de entrar no seu site.${geoInfo}`;
   } else {
-    if (!title) return res.status(400).json({ error: 'Title is required' });
-    text = `🔔 *Novo Clique!*\n\n📦 *Produto:* ${title}\n🛒 *Loja:* ${marketplace || 'Não especificada'}`;
+    if (!title && type !== 'ban') return res.status(400).json({ error: 'Title is required' });
+    
+    if (type === 'ban') {
+       text = `🚫 *Bloqueio Anti-Spam!*\nAlguém tentou clicar mais de 20 vezes e foi banido por 20 minutos.${geoInfo}`;
+    } else {
+       text = `🔔 *Novo Clique!*\n\n📦 *Produto:* ${title}\n🛒 *Loja:* ${marketplace || 'Não especificada'}${geoInfo}`;
+    }
   }
 
   try {
