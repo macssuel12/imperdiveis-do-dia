@@ -98,18 +98,27 @@ async function renderProducts(highlightId = null) {
           e.preventDefault();
           e.stopPropagation();
           
-          // Cria o overlay se não existir
+          // Remove overlay antigo se existir para recriar com a logo certa
           let overlay = document.querySelector('.redirect-overlay');
-          if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.className = 'redirect-overlay';
-            overlay.innerHTML = `
-              <div class="redirect-spinner"></div>
-              <div class="redirect-title">Redirecionando para a loja parceira...</div>
-              <div class="redirect-subtitle">Aplicando o desconto da Oferta Relâmpago.</div>
-            `;
-            document.body.appendChild(overlay);
+          if (overlay) overlay.remove();
+
+          // Define qual logo mostrar
+          let logoHtml = '';
+          if (product.marketplace === 'shopee') {
+            logoHtml = '<img src="https://img.icons8.com/color/100/shopee.png" style="height: 50px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));" alt="Shopee">';
+          } else {
+            logoHtml = '<img src="ml-logo.jpg" style="height: 50px; border-radius: 8px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));" alt="Mercado Livre">';
           }
+
+          overlay = document.createElement('div');
+          overlay.className = 'redirect-overlay';
+          overlay.innerHTML = `
+            ${logoHtml}
+            <div class="redirect-spinner"></div>
+            <div class="redirect-title">Redirecionando para a loja parceira...</div>
+            <div class="redirect-subtitle">Aplicando o desconto da Oferta Relâmpago.</div>
+          `;
+          document.body.appendChild(overlay);
           
           // Mostra a tela de carregamento profissional
           requestAnimationFrame(() => {
