@@ -98,9 +98,31 @@ async function renderProducts(highlightId = null) {
           e.preventDefault();
           e.stopPropagation();
           
-          // Dispara rastreamento e redireciona para a URL do produto específico
+          // Cria o overlay se não existir
+          let overlay = document.querySelector('.redirect-overlay');
+          if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'redirect-overlay';
+            overlay.innerHTML = `
+              <div class="redirect-spinner"></div>
+              <div class="redirect-title">Redirecionando para a loja parceira...</div>
+              <div class="redirect-subtitle">Aplicando o desconto da Oferta Relâmpago.</div>
+            `;
+            document.body.appendChild(overlay);
+          }
+          
+          // Mostra a tela de carregamento profissional
+          requestAnimationFrame(() => {
+            overlay.classList.add('active');
+          });
+          
+          // Dispara rastreamento no Pixel
           trackCtaClick(product.id, product.marketplace, encodeURIComponent(product.title));
-          window.location.href = product.affiliateUrl;
+          
+          // Aguarda 1.5 segundos (para passar credibilidade) e redireciona
+          setTimeout(() => {
+            window.location.href = product.affiliateUrl;
+          }, 1500);
         };
 
         // Escuta qualquer clique ou toque na tela inteira

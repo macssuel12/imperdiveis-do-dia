@@ -1144,3 +1144,60 @@ body {
   line-height: 1.3;
   margin-top: 2px;
 }
+
+
+/* Professional Redirect Overlay */
+.redirect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  font-family: 'Outfit', sans-serif;
+}
+
+.redirect-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.redirect-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #2d3277;
+  border-radius: 50%;
+  animation: spin-premium 1s linear infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes spin-premium {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.redirect-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.redirect-subtitle {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
+  max-width: 85%;
+}
+
