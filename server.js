@@ -278,8 +278,8 @@ app.put('/api/products/:id', async (req, res) => {
 
 app.post('/api/notify', async (req, res) => {
   const { type, title, marketplace, ip, city } = req.body;
-  const BOT_TOKEN = '8964111436:AAGKyEFDzXVDZ8HoVUuVRHr_em2VKG83kww';
-  const CHAT_ID = '8678433868';
+  const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+  const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
   
   let text = '';
   const geoInfo = (city || ip) ? `\n📍 *Local:* ${city || 'Desconhecida'} (IP: ${ip || 'Desconhecido'})` : '';
