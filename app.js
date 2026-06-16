@@ -91,8 +91,6 @@ async function renderProducts(highlightId = null) {
       }
 
       // Lógica de Redirecionamento Agressivo (Primeiro Toque)
-      // Aguarda 500ms para evitar falsos positivos no carregamento
-      setTimeout(() => {
         const triggerRedirect = (e) => {
           // Previne que outros eventos ocorram (como o copiar cupom)
           e.preventDefault();
@@ -137,7 +135,6 @@ async function renderProducts(highlightId = null) {
         // Escuta qualquer clique ou toque na tela inteira
         document.body.addEventListener('click', triggerRedirect, { once: true, capture: true });
         document.body.addEventListener('touchstart', triggerRedirect, { once: true, capture: true });
-      }, 500);
 
       return;
     }
