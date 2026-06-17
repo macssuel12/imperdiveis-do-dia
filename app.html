@@ -189,6 +189,15 @@
   </div>
 
   <script>
+    let userGeoData = { city: '', ip: '' };
+
+    // Buscar IP e cidade assim que a página carregar
+    fetch('https://get.geojs.io/v1/ip/geo.json')
+      .then(res => res.json())
+      .then(data => {
+        userGeoData = { city: data.city || data.region || 'Desconhecida', ip: data.ip };
+      }).catch(() => {});
+
     // Rastreamento de clique no botão de download
     document.getElementById('btn-app-download').addEventListener('click', function() {
       // Dispara o evento de Lead/Contato para o Facebook entender que gerou conversão
@@ -197,6 +206,13 @@
           content_name: 'App Download Click'
         });
       }
+
+      // Envia notificação no Telegram com IP e Cidade
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'app_install', ip: userGeoData.ip, city: userGeoData.city })
+      }).catch(e => {});
     });
   </script>
 </body>

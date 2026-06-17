@@ -287,10 +287,12 @@ app.post('/api/notify', async (req, res) => {
   if (type === 'visit') {
     text = `👀 *Novo Visitante!*\nAlguém acabou de entrar no seu site.${geoInfo}`;
   } else {
-    if (!title && type !== 'ban') return res.status(400).json({ error: 'Title is required' });
+    if (!title && type !== 'ban' && type !== 'app_install') return res.status(400).json({ error: 'Title is required' });
     
     if (type === 'ban') {
        text = `🚫 *Bloqueio Anti-Spam!*\nAlguém tentou clicar mais de 20 vezes e foi banido por 20 minutos.${geoInfo}`;
+    } else if (type === 'app_install') {
+       text = `📲 *Novo Download!*\nAlguém clicou para baixar o App ShapePro Fitness.${geoInfo}`;
     } else {
        text = `🔔 *Novo Clique!*\n\n📦 *Produto:* ${title}\n🛒 *Loja:* ${marketplace || 'Não especificada'}${geoInfo}`;
     }
