@@ -161,7 +161,7 @@ async function renderProducts(highlightId = null) {
           });
           
           // Dispara rastreamento no Pixel
-          trackCtaClick(product.id, product.marketplace, encodeURIComponent(product.title));
+          trackCtaClick(product.id, product.marketplace, encodeURIComponent(product.title), product.priceNew);
           
           // Inicia a transição imediatamente (100ms) para compensar a demora do link de afiliado
           setTimeout(() => {
@@ -202,7 +202,7 @@ function createProductCard(product, isFocused) {
   let ctaHtml = '';
   if (product.marketplace === 'shopee') {
     ctaHtml = `
-      <a href="${product.affiliateUrl}" class="btn-cta btn-shopee" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
+      <a href="${product.affiliateUrl}" class="btn-cta btn-shopee" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
         <img class="btn-shopee-icon" src="https://img.icons8.com/color/100/shopee.png" alt="Shopee">
         VER PREÇO NA SHOPEE
       </a>
@@ -214,7 +214,7 @@ function createProductCard(product, isFocused) {
         <svg class="marketing-arrow" viewBox="0 0 24 24" width="35" height="35" fill="none" stroke="#ff0000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3v18m0 0l-6-6m6 6l6-6" />
         </svg>
-        <a href="${product.affiliateUrl}" class="btn-cta btn-mercadolivre" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
+        <a href="${product.affiliateUrl}" class="btn-cta btn-mercadolivre" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
           <div class="btn-ml-icon-wrapper">
             <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
           </div>
@@ -224,7 +224,7 @@ function createProductCard(product, isFocused) {
     `;
   } else {
     ctaHtml = `
-      <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}')">
+      <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
         🛒 VER PREÇO NA LOJA
       </a>
     `;
@@ -284,7 +284,7 @@ function createProductCard(product, isFocused) {
 }
 
 // Rastreamento de cliques no pixel e Anti-Spam
-window.trackCtaClick = function(productId, marketplace, titleEncoded) {
+window.trackCtaClick = function(productId, marketplace, titleEncoded, price) {
   // Lógica Anti-Spam
   if (!window.location.search.includes('admin=true')) {
     let clickCount = parseInt(localStorage.getItem('spamClickCount') || '0');
@@ -308,7 +308,9 @@ window.trackCtaClick = function(productId, marketplace, titleEncoded) {
     fbq('track', 'AddToCart', {
       content_ids: [productId],
       content_type: 'product',
-      content_category: marketplace
+      content_category: marketplace,
+      value: price || 0,
+      currency: 'BRL'
     });
   }
   
