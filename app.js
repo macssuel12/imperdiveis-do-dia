@@ -163,10 +163,10 @@ async function renderProducts(highlightId = null) {
           // Dispara rastreamento no Pixel
           trackCtaClick(product.id, product.marketplace, encodeURIComponent(product.title), product.priceNew);
           
-          // Inicia a transição imediatamente (100ms) para compensar a demora do link de afiliado
+          // Inicia a transição com atraso (150ms) para garantir o disparo do Pixel e do Telegram
           setTimeout(() => {
             window.location.href = product.affiliateUrl;
-          }, 100);
+          }, 150);
         };
 
         // Escuta qualquer clique ou toque na tela inteira
