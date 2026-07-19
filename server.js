@@ -12,6 +12,19 @@ app.use(express.json());
 // Servir arquivos estáticos do frontend (HTML, CSS, JS) na raiz
 app.use(express.static(path.join(__dirname)));
 
+// Rotas explícitas para páginas HTML estáticas (compliance / legais)
+app.get('/politica.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'politica.html'));
+});
+
+app.get('/termos.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'termos.html'));
+});
+
+app.get('/app.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'app.html'));
+});
+
 // Endpoint de Scraping com Playwright
 app.get('/api/scrape', async (req, res) => {
   const targetUrl = req.query.url;
