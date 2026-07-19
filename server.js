@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const { chromium } = require('playwright');
 const path = require('path');
 
 const app = express();
@@ -25,7 +24,9 @@ app.get('/app.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'app.html'));
 });
 
-// Endpoint de Scraping com Playwright
+// Endpoint de Scraping — Sem Playwright (leve, compatível com Render gratuito)
+// Mercado Livre: usa API oficial pública (100% confiável)
+// Shopee / outros: usa fetch + og:meta tags
 app.get('/api/scrape', async (req, res) => {
   const targetUrl = req.query.url;
 
@@ -33,120 +34,148 @@ app.get('/api/scrape', async (req, res) => {
     return res.status(400).json({ error: 'URL do produto é obrigatória' });
   }
 
-  console.log(`[Robô] Iniciando extração para: ${targetUrl}`);
-  let browser;
+  console.log(`[Scraper] Extraindo dados para: ${targetUrl}`);
+
+  let title = '';
+  let priceNew = 0;
+  let priceOld = null;
+  let image = '';
+  let marketplace = 'generic';
 
   try {
-    // Inicializa o Playwright usando navegador Chromium headless
-    browser = await chromium.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-blink-features=AutomationControlled'
-      ]
-    });
 
-    const context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      viewport: { width: 1280, height: 800 }
-    });
-
-    const page = await context.newPage();
-    
-    // Configura tempo limite de navegação curto para otimizar velocidade
-    await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-
-    let title = '';
-    let priceNew = 0;
-    let priceOld = null;
-    let image = '';
-    let marketplace = 'generic';
-
+    // ─────────────────────────────────────────────
+    // MERCADO LIVRE — API pública oficial
+    // ─────────────────────────────────────────────
     if (targetUrl.includes('mercadolivre.com.br') || targetUrl.includes('mercadolibre.com')) {
       marketplace = 'mercadolivre';
-      
-      // Extrair dados do Mercado Livre
-      title = await page.locator('h1.ui-pdp-title').first().innerText().catch(() => '');
-      
-      // Tenta imagem do Mercado Livre
-      image = await page.locator('img.ui-pdp-image.ui-pdp-gallery__figure__image').first().getAttribute('src').catch(() => '');
-      if (!image) {
-        image = await page.locator('img.ui-pdp-image').first().getAttribute('src').catch(() => '');
+
+      // Extrai o ID do produto (MLB + dígitos) da URL
+      const mlbMatch = targetUrl.match(/MLB-?(\d+)/i);
+      if (!mlbMatch) {
+        throw new Error('URL do Mercado Livre inválida. Certifique-se de copiar o link direto do produto (deve conter MLB + números).');
       }
 
-      // Tenta extrair preço promocional
-      const priceText = await page.locator('.ui-pdp-price__part--medium .andes-money-amount__fraction').first().innerText().catch(() => '');
-      const centsText = await page.locator('.ui-pdp-price__part--medium .andes-money-amount__cents').first().innerText().catch(() => '00');
-      
-      if (priceText) {
-        priceNew = parseFloat(priceText.replace(/\./g, '').replace(',', '.')) + (parseFloat(centsText) / 100);
+      const itemId = 'MLB' + mlbMatch[1];
+      console.log(`[ML API] Buscando item: ${itemId}`);
+
+      const apiRes = await fetch(`https://api.mercadolibre.com/items/${itemId}`, {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (compatible; AchadosBot/1.0)'
+        }
+      });
+
+      if (!apiRes.ok) {
+        throw new Error(`A API do Mercado Livre retornou erro ${apiRes.status}. Verifique se o link do produto está correto.`);
       }
 
-      // Preço antigo
-      const oldPriceText = await page.locator('.ui-pdp-price__part--small .andes-money-amount__fraction').first().innerText().catch(() => '');
-      if (oldPriceText) {
-        priceOld = parseFloat(oldPriceText.replace(/\./g, '').replace(',', '.'));
+      const data = await apiRes.json();
+
+      title    = data.title || '';
+      priceNew = data.price || 0;
+      priceOld = data.original_price || null;
+
+      // Pega imagem de maior qualidade disponível
+      if (data.pictures && data.pictures.length > 0) {
+        image = data.pictures[0].url.replace('-I.jpg', '-O.jpg').replace('-I.webp', '-O.webp');
+      } else if (data.thumbnail) {
+        image = data.thumbnail.replace('-I.jpg', '-O.jpg');
       }
 
-    } else if (targetUrl.includes('shopee.com.br')) {
+    // ─────────────────────────────────────────────
+    // SHOPEE — fetch + og:meta tags
+    // ─────────────────────────────────────────────
+    } else if (targetUrl.includes('shopee.com.br') || targetUrl.includes('shope.ee')) {
       marketplace = 'shopee';
 
-      // Aguarda um curto espaço para renderização de scripts da Shopee
-      await page.waitForTimeout(2000);
+      const pageRes = await fetch(targetUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+          'Cache-Control': 'no-cache'
+        },
+        redirect: 'follow'
+      });
 
-      // Tenta múltiplos seletores comuns de título da Shopee
-      title = await page.locator('div.V2JnSS span').first().innerText()
-        .catch(async () => await page.locator('.EFPT-g').first().innerText())
-        .catch(async () => await page.title())
-        .catch(() => '');
+      const html = await pageRes.text();
 
-      // Imagem do produto
-      image = await page.locator('div.p\\+3u1m img').first().getAttribute('src')
-        .catch(async () => await page.locator('div.flex-shrink-0 img').first().getAttribute('src'))
-        .catch(async () => await page.locator('img').first().getAttribute('src'))
-        .catch(() => '');
+      // Extrai og:title
+      const titleMatch =
+        html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']*)["']/) ||
+        html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+property=["']og:title["']/);
 
-      // Preço da Shopee
-      const rawPrice = await page.locator('div.PQmLw1').first().innerText()
-        .catch(async () => await page.locator('div._3n55aS').first().innerText())
-        .catch(() => '');
+      // Extrai og:image
+      const imageMatch =
+        html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']*)["']/) ||
+        html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+property=["']og:image["']/);
 
-      if (rawPrice) {
-        const cleanedPrice = rawPrice.replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
-        priceNew = parseFloat(cleanedPrice) || 0;
+      title = titleMatch ? titleMatch[1].replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim() : '';
+      image = imageMatch ? imageMatch[1] : '';
+
+      // Tenta encontrar preço no HTML (R$ seguido de valor)
+      const priceMatches = html.match(/R\$\s*([\d.]+,[\d]{2})/g);
+      if (priceMatches && priceMatches.length > 0) {
+        const raw = priceMatches[0].replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
+        priceNew = parseFloat(raw) || 0;
+        if (priceMatches.length > 1) {
+          const rawOld = priceMatches[1].replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
+          const possibleOld = parseFloat(rawOld) || 0;
+          if (possibleOld > priceNew) priceOld = possibleOld;
+        }
       }
+
+    // ─────────────────────────────────────────────
+    // GENÉRICO — og:meta tags
+    // ─────────────────────────────────────────────
     } else {
-      // Outro site genérico
-      title = await page.title().catch(() => 'Produto sem título');
-      image = await page.locator('img').first().getAttribute('src').catch(() => '');
+      const pageRes = await fetch(targetUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'text/html,*/*;q=0.8'
+        },
+        redirect: 'follow'
+      });
+
+      const html = await pageRes.text();
+
+      const titleMatch =
+        html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']*)["']/) ||
+        html.match(/<title[^>]*>([^<]+)<\/title>/);
+
+      const imageMatch =
+        html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']*)["']/);
+
+      title = titleMatch ? titleMatch[1].trim() : '';
+      image = imageMatch ? imageMatch[1] : '';
     }
 
-    await browser.close();
-
-    // Sanitização e Fallbacks caso venham vazios
+    // Validação final
     if (!title || title.trim() === '') {
-      throw new Error('Não foi possível extrair dados estruturados da página automaticamente');
+      throw new Error('Não foi possível extrair o título do produto automaticamente. Por favor, preencha manualmente.');
     }
+
+    console.log(`[Scraper] ✅ Sucesso: ${title.substring(0, 60)}...`);
 
     return res.json({
       success: true,
       title: title.trim(),
       image: image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=60',
-      priceNew: priceNew || 99.90,
+      priceNew: priceNew || 0,
       priceOld: priceOld,
       marketplace
     });
 
   } catch (error) {
-    console.error('[Erro Robô]:', error.message);
-    if (browser) await browser.close();
-    return res.status(500).json({ 
-      success: false, 
-      error: error.message || 'Falha ao processar a página com Playwright' 
+    console.error('[Erro Scraper]:', error.message);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Falha ao processar a página'
     });
   }
 });
+
 
 // Integração com o Banco de Dados do Supabase
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nxxtfvvieosonmfajhdp.supabase.co';
