@@ -178,8 +178,8 @@ app.get('/api/scrape', async (req, res) => {
 
 
 // Integração com o Banco de Dados do Supabase
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://nxxtfvvieosnmfajhdp.supabase.co';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_tr1tJzD83vyq3HkXyevJAQ_XMaKquyE';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://szaflgrkqcgxmvbqgfcd.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_P4dhV879yZ6pYiboi9UPJg_nhlYqO7n';
 
 app.get('/api/products', async (req, res) => {
   try {
