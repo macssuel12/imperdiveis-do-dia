@@ -12,24 +12,29 @@
   <!-- Estilos Globais -->
   <link rel="stylesheet" href="styles.css">
   
-  <!-- Meta Pixel Code -->
+  <!-- Meta Pixel — Carrega apenas após consentimento LGPD -->
   <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1418751903348459');
-    fbq('track', 'PageView');
+    // Função para inicializar o Pixel após consentimento
+    function initMetaPixel() {
+      if (window._pixelLoaded) return;
+      window._pixelLoaded = true;
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1418751903348459');
+      fbq('track', 'PageView');
+    }
+    // Se o usuário já aceitou anteriormente, carrega direto
+    if (localStorage.getItem('lgpd_consent') === 'accepted') {
+      initMetaPixel();
+    }
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none" 
-         src="https://www.facebook.com/tr?id=1418751903348459&ev=PageView&noscript=1"/>
-  </noscript>
-  <!-- End Meta Pixel Code -->
+  <!-- End Meta Pixel -->
 </head>
 <body>
 
@@ -181,17 +186,11 @@
   <!-- Rodapé Fixo (Sticky Footer) -->
   <footer class="sticky-footer">
     <div class="trust-logos-box">
-      <span class="trust-text">Compre com segurança via:</span>
+      <span class="trust-text">Ofertas disponíveis em:</span>
       <div class="marketplace-logos">
-        <!-- Logo Mercado Livre -->
-        <svg class="mkt-logo" viewBox="0 0 100 24" style="height: 16px;">
-          <text x="0" y="18" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="#2d3277">Mercado</text>
-          <text x="58" y="18" font-family="'Outfit', sans-serif" font-weight="800" font-size="14" fill="#3483fa">Livre</text>
-        </svg>
-        <!-- Logo Shopee -->
-        <svg class="mkt-logo" viewBox="0 0 80 24" style="height: 16px;">
-          <text x="0" y="18" font-family="'Outfit', sans-serif" font-weight="900" font-size="16" fill="#ee4d2d">Shopee</text>
-        </svg>
+        <!-- Texto referencial (sem uso indevido de marca registrada) -->
+        <span style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.82rem; color: #2d3277; background: #fff159; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.2px;">Mercado Livre</span>
+        <span style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.82rem; color: #ffffff; background: #ee4d2d; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.2px;">Shopee</span>
       </div>
     </div>
     
@@ -239,7 +238,69 @@
     </p>
   </div>
 
+  <!-- ============================================================
+       BANNER DE CONSENTIMENTO DE COOKIES — LGPD
+       Lei Geral de Proteção de Dados (Lei nº 13.709/2018)
+       ============================================================ -->
+  <div id="lgpd-banner" role="dialog" aria-label="Consentimento de cookies" aria-live="polite">
+    <div class="lgpd-content">
+      <span class="lgpd-icon">🍪</span>
+      <div class="lgpd-text">
+        <strong>Privacidade e Cookies</strong>
+        <p>
+          Utilizamos cookies e tecnologias semelhantes (incluindo o Meta Pixel) para melhorar sua experiência,
+          mensurar nossas campanhas e exibir ofertas relevantes. Ao continuar navegando, você concorda com nossa
+          <a href="politica.html">Política de Privacidade</a> e com a <strong>Lei nº 13.709/2018 (LGPD)</strong>.
+        </p>
+      </div>
+    </div>
+    <div class="lgpd-actions">
+      <button class="btn-lgpd-decline" id="btn-lgpd-decline" aria-label="Recusar cookies não essenciais">Só essenciais</button>
+      <button class="btn-lgpd-accept" id="btn-lgpd-accept" aria-label="Aceitar todos os cookies">✓ Aceitar e Continuar</button>
+    </div>
+  </div>
+
   <!-- Lógica Principal -->
   <script src="app.js"></script>
+
+  <!-- Script LGPD: Gerencia consentimento e ativa Pixel conforme escolha -->
+  <script>
+    (function() {
+      var banner = document.getElementById('lgpd-banner');
+      var btnAccept = document.getElementById('btn-lgpd-accept');
+      var btnDecline = document.getElementById('btn-lgpd-decline');
+      var CONSENT_KEY = 'lgpd_consent';
+
+      // Verifica se já há decisão salva
+      var saved = localStorage.getItem(CONSENT_KEY);
+
+      if (!saved) {
+        // Mostra o banner com delay suave para não bloquear o carregamento
+        setTimeout(function() {
+          banner.classList.add('visible');
+        }, 800);
+      }
+
+      function hideBanner() {
+        banner.classList.remove('visible');
+        banner.classList.add('hidden');
+      }
+
+      // Aceitar: salva consentimento e inicializa o Pixel
+      btnAccept.addEventListener('click', function() {
+        localStorage.setItem(CONSENT_KEY, 'accepted');
+        hideBanner();
+        if (typeof initMetaPixel === 'function') {
+          initMetaPixel();
+        }
+      });
+
+      // Recusar: salva decisão sem ativar rastreamento não essencial
+      btnDecline.addEventListener('click', function() {
+        localStorage.setItem(CONSENT_KEY, 'declined');
+        hideBanner();
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -1294,3 +1294,156 @@ body {
   }
 }
 
+/* ============================================================
+   LGPD COOKIE CONSENT BANNER — Profissional e Responsivo
+   ============================================================ */
+
+#lgpd-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.35);
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-wrap: wrap;
+}
+
+#lgpd-banner.visible {
+  transform: translateY(0);
+}
+
+#lgpd-banner.hidden {
+  transform: translateY(100%);
+  pointer-events: none;
+}
+
+.lgpd-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.lgpd-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.lgpd-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.lgpd-text strong {
+  display: block;
+  color: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.lgpd-text p {
+  color: #94a3b8;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+}
+
+.lgpd-text a {
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.lgpd-text a:hover {
+  text-decoration: underline;
+}
+
+.lgpd-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btn-lgpd-accept {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  white-space: nowrap;
+}
+
+.btn-lgpd-accept:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+}
+
+.btn-lgpd-accept:active {
+  transform: translateY(1px);
+}
+
+.btn-lgpd-decline {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-lgpd-decline:hover {
+  color: #94a3b8;
+  border-color: rgba(255,255,255,0.2);
+}
+
+@media (max-width: 600px) {
+  #lgpd-banner {
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px 16px;
+  }
+
+  .lgpd-actions {
+    width: 100%;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .btn-lgpd-accept,
+  .btn-lgpd-decline {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+  }
+}
+
+
