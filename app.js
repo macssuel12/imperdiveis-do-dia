@@ -127,25 +127,6 @@ async function renderProducts(highlightId = null) {
         });
       }
 
-      // Lógica de Redirecionamento Agressivo (Primeiro Toque)
-        const triggerRedirect = (e) => {
-          // Previne que outros eventos ocorram (como o copiar cupom)
-          e.preventDefault();
-          e.stopPropagation();
-          
-          // Dispara rastreamento no Pixel
-          trackCtaClick(product.id, product.marketplace, encodeURIComponent(product.title), product.priceNew);
-          
-          // Inicia a transição com atraso (150ms) para garantir o disparo do Pixel e do Telegram
-          setTimeout(() => {
-            window.location.href = product.affiliateUrl;
-          }, 150);
-        };
-
-        // Escuta qualquer clique ou toque na tela inteira
-        document.body.addEventListener('click', triggerRedirect, { once: true, capture: true });
-        document.body.addEventListener('touchstart', triggerRedirect, { once: true, capture: true });
-
       return;
     }
   }
@@ -204,15 +185,16 @@ function createProductCard(product, isFocused) {
   }
 
   card.innerHTML = `
-    <div class="flash-sale-banner">
+    <div class="flash-sale-banner" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
       <div class="flash-sale-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
-        OFERTA RELÂMPAGO
+        OFERTA VERIFICADA
       </div>
-      <div class="flash-sale-timer">
-        Termina em: <span class="time-left">14:59</span>
+      <div style="font-size: 0.75rem; font-weight: 700; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 20px;">
+        Estoque Ativo
       </div>
     </div>
     <div class="img-container">
@@ -239,16 +221,6 @@ function createProductCard(product, isFocused) {
       <div class="trust-badges">
         <div class="trust-badge">🔒 Ambiente 100% Seguro</div>
         <div class="trust-badge">✅ Redirecionamento oficial: ${product.marketplace === 'mercadolivre' ? 'Mercado Livre' : (product.marketplace === 'shopee' ? 'Shopee' : 'Loja Oficial')}</div>
-      </div>
-
-      <div class="social-proof-reviews">
-        <div class="review-item">
-          <div class="reviewer-avatar">👩</div>
-          <div class="review-content">
-            <span class="reviewer-name">Maria Silva <span class="verified-buyer">✓ Compra Verificada</span></span>
-            <span class="review-text">Chegou muito rápido e bem embalado, recomendo! ✨</span>
-          </div>
-        </div>
       </div>
     </div>
   `;
@@ -755,18 +727,4 @@ window.copyCoupon = function(btnElement, code) {
   });
 }
 
-// Countdown Timer Logic
-setInterval(() => {
-  document.querySelectorAll('.time-left').forEach(el => {
-    let text = el.textContent;
-    let [min, sec] = text.split(':').map(Number);
-    if (min === 0 && sec === 0) return;
-    if (sec === 0) {
-      min--;
-      sec = 59;
-    } else {
-      sec--;
-    }
-    el.textContent = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-  });
-}, 1000);
+

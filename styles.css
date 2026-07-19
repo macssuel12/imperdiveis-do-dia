@@ -1201,3 +1201,96 @@ body {
   max-width: 85%;
 }
 
+/* --- ESTILOS DE COMPLIANCE E OTIMIZAÇÃO CRO (BOTÃO FIXO NO MOBILE) --- */
+@media (max-width: 768px) {
+  /* Quando estiver visualizando um único produto (highlight-mode) */
+  body.highlight-mode {
+    padding-bottom: 110px !important; /* Espaço para o botão flutuante no final da página */
+  }
+
+  /* Oculta o botão de WhatsApp no rodapé fixo para liberar espaço para o botão do produto */
+  body.highlight-mode #vip-whatsapp-footer {
+    display: none !important;
+  }
+
+  /* Remove o fundo branco do rodapé fixo para não cobrir o botão flutuante */
+  body.highlight-mode .sticky-footer {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-top: none !important;
+    padding: 0 !important;
+    pointer-events: none; /* Permite interações com elementos que estejam "atrás" */
+    height: 0;
+  }
+  
+  body.highlight-mode .sticky-footer .trust-logos-box {
+    display: none !important;
+  }
+
+  /* Torna o CTA do card de produto fixado no rodapé no mobile */
+  body.highlight-mode .product-card.focused .btn-cta,
+  body.highlight-mode .product-card.focused .ml-cta-container {
+    position: fixed !important;
+    bottom: 12px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: calc(100% - 24px) !important;
+    z-index: 9999 !important;
+    margin: 0 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+    pointer-events: auto; /* Permite cliques normais no botão */
+  }
+
+  /* Se for o container do Mercado Livre (que inclui seta e texto adicional) */
+  body.highlight-mode .product-card.focused .ml-cta-container {
+    background: #ffffff !important;
+    padding: 6px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    gap: 0 !important;
+  }
+
+  /* Oculta textos e setas auxiliares que poluem visualmente o botão flutuante */
+  body.highlight-mode .product-card.focused .ml-cta-container .click-here-text,
+  body.highlight-mode .product-card.focused .ml-cta-container .marketing-arrow {
+    display: none !important;
+  }
+
+  /* Mantém o card principal leve e compacto para caber acima da dobra (sem precisar scrollar) */
+  body.highlight-mode .product-card.focused {
+    margin-bottom: 20px !important;
+    border: 1px solid #cbd5e1 !important; /* Borda mais suave para parecer profissional */
+  }
+
+  body.highlight-mode .product-card.focused .img-container {
+    padding-bottom: 65% !important; /* Altura de imagem reduzida no mobile */
+  }
+
+  body.highlight-mode .product-card.focused .card-info {
+    padding: 12px !important;
+  }
+
+  body.highlight-mode .product-card.focused .product-title {
+    font-size: 0.95rem !important;
+    height: auto !important;
+    max-height: 2.8rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  body.highlight-mode .product-card.focused .price-box {
+    margin: 6px 0 !important;
+  }
+
+  body.highlight-mode .product-card.focused .coupon-box {
+    margin-bottom: 6px !important;
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Garante que o botão de "Ver Todos os Achadinhos" fique visível acima do botão fixo */
+  body.highlight-mode .btn-all-products {
+    margin-top: 10px !important;
+    margin-bottom: 120px !important;
+  }
+}
+
