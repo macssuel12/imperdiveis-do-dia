@@ -178,9 +178,15 @@ function createProductCard(product, isFocused) {
     `;
   } else {
     ctaHtml = `
-      <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
-        🛒 VER PREÇO NA LOJA
-      </a>
+      <div class="generic-cta-container">
+        <div class="click-here-text" style="font-size:0.8rem; font-weight:800; color:#3483fa;">CLIQUE PARA COMPRAR</div>
+        <svg class="marketing-arrow" viewBox="0 0 24 24" width="35" height="35" fill="none" stroke="#3483fa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18m0 0l-6-6m6 6l6-6" />
+        </svg>
+        <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
+          🛒 VER PRODUTO NA LOJA OFICIAL
+        </a>
+      </div>
     `;
   }
 
