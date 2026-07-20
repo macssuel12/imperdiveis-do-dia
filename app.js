@@ -474,6 +474,11 @@ function setupAdminPanel() {
     const marketplace = document.getElementById('manual-marketplace').value;
     const affiliateUrl = affiliateUrlInput.value.trim();
 
+    const ratingInput = document.getElementById('manual-rating').value;
+    const reviewsInput = document.getElementById('manual-reviews').value;
+    const rating = ratingInput ? parseFloat(ratingInput) : 5.0;
+    const reviews = reviewsInput ? parseInt(reviewsInput, 10) : 100;
+
     if (!title || !priceNew) {
       alert("Por favor, preencha pelo menos o Título e o Preço Promocional.");
       return;
@@ -485,7 +490,9 @@ function setupAdminPanel() {
       priceOld: priceOld,
       priceNew: priceNew,
       marketplace: marketplace,
-      affiliateUrl: affiliateUrl
+      affiliateUrl: affiliateUrl,
+      rating: rating,
+      reviews: reviews
     };
 
     if (editingProductId) {
@@ -493,8 +500,6 @@ function setupAdminPanel() {
     } else {
       const newProduct = {
         id: "prod-" + Date.now(),
-        rating: 4.5 + Math.random() * 0.5,
-        reviews: Math.floor(50 + Math.random() * 200),
         ...productData
       };
       saveNewProduct(newProduct);
@@ -597,6 +602,8 @@ async function startEditingProduct(id) {
   document.getElementById('manual-price-old').value = product.priceOld || '';
   document.getElementById('manual-price-new').value = product.priceNew;
   document.getElementById('manual-marketplace').value = product.marketplace;
+  document.getElementById('manual-rating').value = product.rating || '';
+  document.getElementById('manual-reviews').value = product.reviews || '';
   affiliateUrlInput.value = product.affiliateUrl;
 
   // Ativa a área manual e rola para ela
