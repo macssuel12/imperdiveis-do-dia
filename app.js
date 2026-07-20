@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.userGeoData.ip = data.ip || 'Desconhecido';
       
       // Notificar visita
-      if (!window.location.search.includes('admin=true') && !sessionStorage.getItem('visited')) {
+      if (!window.location.search.includes('admin=true') && window.location.pathname !== '/admino' && !sessionStorage.getItem('visited')) {
         sessionStorage.setItem('visited', 'true');
         fetch('/api/notify', {
           method: 'POST',
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }).catch(err => {
       // Fallback sem geo
-      if (!window.location.search.includes('admin=true') && !sessionStorage.getItem('visited')) {
+      if (!window.location.search.includes('admin=true') && window.location.pathname !== '/admino' && !sessionStorage.getItem('visited')) {
         sessionStorage.setItem('visited', 'true');
         fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'visit' }) }).catch(() => {});
       }
@@ -231,7 +231,7 @@ function createProductCard(product, isFocused) {
 // Rastreamento de cliques no pixel e Anti-Spam
 window.trackCtaClick = function(productId, marketplace, titleEncoded, price) {
   // Lógica Anti-Spam
-  if (!window.location.search.includes('admin=true')) {
+  if (!window.location.search.includes('admin=true') && window.location.pathname !== '/admino') {
     let clickCount = parseInt(localStorage.getItem('spamClickCount') || '0');
     clickCount++;
     localStorage.setItem('spamClickCount', clickCount);
@@ -280,8 +280,8 @@ function checkRouting() {
   const productParam = params.get('p') || params.get('produto');
   const hashParam = window.location.hash ? window.location.hash.substring(1) : null;
   
-  // Verifica se o usuário está tentando acessar o painel administrativo (?admin=true ou #admin)
-  const isAdminRequest = params.get('admin') === 'true' || params.get('p') === 'admin' || hashParam === 'admin';
+  // Verifica se o usuário está tentando acessar o painel administrativo (?admin=true ou #admin ou /admino)
+  const isAdminRequest = params.get('admin') === 'true' || params.get('p') === 'admin' || hashParam === 'admin' || window.location.pathname === '/admino';
   
   if (isAdminRequest) {
     // Limpa o parâmetro da URL visualmente para manter a discrição e evitar loops no prompt

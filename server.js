@@ -24,6 +24,10 @@ app.get('/app.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'app.html'));
 });
 
+app.get('/admino', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Endpoint de Scraping — Sem Playwright (leve, compatível com Render gratuito)
 // Mercado Livre: usa API oficial pública (100% confiável)
 // Shopee / outros: usa fetch + og:meta tags
