@@ -179,12 +179,12 @@ function createProductCard(product, isFocused) {
   } else {
     ctaHtml = `
       <div class="generic-cta-container">
-        <div class="click-here-text" style="font-size:0.8rem; font-weight:800; color:#3483fa;">CLIQUE PARA COMPRAR</div>
-        <svg class="marketing-arrow" viewBox="0 0 24 24" width="35" height="35" fill="none" stroke="#3483fa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <div class="click-here-text" style="font-size:0.85rem; font-weight:800; color:#2563eb; letter-spacing:0.5px;">👉 CLIQUE ABAIXO PARA COMPRAR NA LOJA OFICIAL</div>
+        <svg class="marketing-arrow" viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3v18m0 0l-6-6m6 6l6-6" />
         </svg>
         <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
-          🛒 VER PRODUTO NA LOJA OFICIAL
+          <span>🛒 VER PRODUTO NA LOJA OFICIAL</span>
         </a>
       </div>
     `;

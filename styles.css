@@ -565,29 +565,56 @@ body {
 }
 
 .btn-generic {
-  background-color: var(--ml-blue);
-  color: white;
-  padding: 16px 20px;
-  font-size: 1.05rem;
-  animation: pulseZoom 2s infinite ease-in-out;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+  color: #ffffff;
+  padding: 16px 24px;
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.45), 0 0 15px rgba(59, 130, 246, 0.35);
+  animation: pulseZoom 1.8s infinite ease-in-out;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: -2px;
+}
+
+.btn-generic::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 2.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  35%, 100% { left: 160%; }
 }
 
 .btn-generic:hover {
-  box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.6), 0 0 25px rgba(59, 130, 246, 0.6);
 }
 
 @keyframes pulseZoom {
   0% {
     transform: scale(1);
-    box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4), 0 0 12px rgba(59, 130, 246, 0.3);
   }
   50% {
     transform: scale(1.04);
-    box-shadow: 0 8px 20px rgba(52, 131, 250, 0.6);
+    box-shadow: 0 12px 32px rgba(37, 99, 235, 0.75), 0 0 25px rgba(59, 130, 246, 0.6);
   }
   100% {
     transform: scale(1);
-    box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4), 0 0 12px rgba(59, 130, 246, 0.3);
   }
 }
 
@@ -1250,13 +1277,13 @@ body {
   body.highlight-mode .product-card.focused .ml-cta-container,
   body.highlight-mode .product-card.focused .generic-cta-container {
     position: fixed !important;
-    bottom: 12px !important;
+    bottom: 24px !important;
     left: 12px !important;
     right: 12px !important;
     width: calc(100% - 24px) !important;
     z-index: 9999 !important;
     margin: 0 !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
     pointer-events: auto; /* Permite cliques normais no botão */
   }
 
@@ -1324,7 +1351,7 @@ body {
     padding: 10px 12px !important;
   }
 
-  .btn-cta, .ml-cta-container {
+  .btn-cta, .ml-cta-container, .generic-cta-container {
     margin-bottom: 10px !important; /* Espaço entre CTA e o cupom/badges */
   }
 }
