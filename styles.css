@@ -1355,6 +1355,32 @@ body {
   .btn-cta, .ml-cta-container, .generic-cta-container {
     margin-bottom: 10px !important; /* Espaço entre CTA e o cupom/badges */
   }
+
+  /* Ajusta o rodapé fixo no celular para empurrar o card de logos para baixo e diminuir o espaço ocupado */
+  .sticky-footer {
+    padding: 4px 12px 6px 12px !important;
+    gap: 4px !important;
+  }
+
+  .trust-logos-box {
+    order: 2 !important; /* Move a caixa de logos para debaixo do botão do WhatsApp */
+    margin-top: 3px !important;
+  }
+
+  .btn-whatsapp-vip {
+    order: 1 !important; /* Coloca o botão do WhatsApp no topo */
+    padding: 6px !important; /* Reduz levemente a altura do botão */
+    font-size: 0.75rem !important;
+  }
+
+  .trust-text {
+    font-size: 0.55rem !important; /* Diminui a fonte do texto */
+  }
+
+  .marketplace-logos span {
+    font-size: 0.7rem !important; /* Diminui o tamanho das tags */
+    padding: 1px 6px !important;
+  }
 }
 
 /* ============================================================
