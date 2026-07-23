@@ -1535,4 +1535,37 @@ body {
   }
 }
 
+/* Otimização para Desktop (telas de computador) */
+@media (min-width: 769px) {
+  /* Cabeçalho mais para baixo e centralizado */
+  .sticky-header {
+    position: sticky !important;
+    top: 20px !important;
+    margin: 20px auto 25px auto !important;
+    max-width: 500px !important; /* Alinha com a largura máxima do grid de produtos */
+    width: calc(100% - 32px) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  /* Rodapé mais para baixo (sita no fim da página, não-fixo) e centralizado */
+  .sticky-footer {
+    position: static !important; /* Remove a fixação na tela */
+    margin: 40px auto 30px auto !important;
+    max-width: 500px !important;
+    width: calc(100% - 32px) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+    background-color: #ffffff !important;
+    padding: 16px 20px !important;
+  }
+
+  /* Remove o espaçamento inferior gigante no body para desktop */
+  body {
+    padding-bottom: 20px !important;
+  }
+}
+
 
