@@ -1251,7 +1251,7 @@ body {
 @media (max-width: 768px) {
   /* Quando estiver visualizando um único produto (highlight-mode) */
   body.highlight-mode {
-    padding-bottom: 110px !important; /* Espaço para o botão flutuante no final da página */
+    padding-bottom: 140px !important; /* Espaço para o botão flutuante no final da página */
   }
 
   /* Oculta o botão de WhatsApp no rodapé fixo para liberar espaço para o botão do produto */
@@ -1278,7 +1278,7 @@ body {
   body.highlight-mode .product-card.focused .ml-cta-container,
   body.highlight-mode .product-card.focused .generic-cta-container {
     position: fixed !important;
-    bottom: 24px !important;
+    bottom: 45px !important;
     left: 12px !important;
     right: 12px !important;
     width: calc(100% - 24px) !important;
