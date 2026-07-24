@@ -569,6 +569,14 @@ body {
   letter-spacing: 0.2px;
 }
 
+.btn-cart-icon {
+  font-size: 1.15rem;
+  margin-right: 4px;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+
 
 .btn-shopee {
   background-color: var(--shopee-orange);
@@ -1406,7 +1414,21 @@ body {
     font-size: 0.7rem !important; /* Diminui o tamanho das tags */
     padding: 1px 6px !important;
   }
+
+  /* Aumenta o tamanho dos botões de compra no mobile */
+  .btn-cta {
+    padding: 16px 14px !important;
+    font-size: 1.02rem !important;
+  }
+
+  /* Aumenta o tamanho do carrinho de compras no mobile */
+  .btn-cart-icon {
+    font-size: 1.32rem !important;
+    margin-right: 6px !important;
+    vertical-align: middle !important;
+  }
 }
+
 
 /* ============================================================
    LGPD COOKIE CONSENT BANNER — Profissional e Responsivo
