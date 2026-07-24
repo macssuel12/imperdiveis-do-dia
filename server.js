@@ -32,11 +32,17 @@ app.get('/admino', (req, res) => {
 // Mercado Livre: usa API oficial pública (100% confiável)
 // Shopee / outros: usa fetch + og:meta tags
 app.get('/api/scrape', async (req, res) => {
-  const targetUrl = req.query.url;
+  let targetUrl = req.query.url;
 
   if (!targetUrl) {
     return res.status(400).json({ error: 'URL do produto é obrigatória' });
   }
+  // Garantir que o link contém o parâmetro de afiliado
+  if (!targetUrl.includes('aff_id=')) {
+    const delimiter = targetUrl.includes('?') ? '&' : '?';
+    targetUrl = `${targetUrl}${delimiter}aff_id=18318151078`;
+  }
+
 
   console.log(`[Scraper] Extraindo dados para: ${targetUrl}`);
 
@@ -86,47 +92,73 @@ app.get('/api/scrape', async (req, res) => {
       } else if (data.thumbnail) {
         image = data.thumbnail.replace('-I.jpg', '-O.jpg');
       }
-
-    // ─────────────────────────────────────────────
-    // SHOPEE — fetch + og:meta tags
-    // ─────────────────────────────────────────────
-    } else if (targetUrl.includes('shopee.com.br') || targetUrl.includes('shope.ee')) {
+    } else if (targetUrl.includes('shopee.com.br') || targetUrl.includes('shopee.ee')) {
       marketplace = 'shopee';
 
-      const pageRes = await fetch(targetUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
-          'Cache-Control': 'no-cache'
-        },
-        redirect: 'follow'
-      });
+      // Attempt to extract itemId and shopId from URL (format: i.<itemId>.<shopId>)
+      const idMatch = targetUrl.match(/i\.(\d+)\.(\d+)/i);
+      if (idMatch) {
+        const itemId = idMatch[1];
+        const shopId = idMatch[2];
+        console.log(`[Shopee API] Fetching item ${itemId} from shop ${shopId}`);
+        const apiUrl = `https://shopee.com.br/api/v2/item/get?itemid=${itemId}&shopid=${shopId}`;
+        const apiRes = await fetch(apiUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; AchadosBot/1.0)'
+          }
+        });
+        if (!apiRes.ok) {
+          throw new Error(`Shopee API error ${apiRes.status}`);
+        }
+        const apiData = await apiRes.json();
+        if (!apiData.item) {
+          throw new Error('Shopee API returned unexpected format');
+        }
+        const item = apiData.item;
+        title = item.name || '';
+        // Prices are in cents (divide by 100000 to get real price)
+        // Prices are in cents (divide by 100000)
+        priceNew = item.price ? item.price / 100000 : 0;
+        if (item.price_before_discount && item.price_before_discount > item.price) {
+          priceOld = item.price_before_discount / 100000;
+        }
+        // Build image URL from item.images (first image)
+        if (item.images && item.images.length > 0) {
+          const imgId = item.images[0];
+          image = `https://cf.shopee.com.br/file/${imgId}`;
+        }
+      } else {
+        // Fallback to original HTML parsing
+        const pageRes = await fetch(targetUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+            'Cache-Control': 'no-cache'
+          },
+          redirect: 'follow'
+        });
+        const html = await pageRes.text();
 
-      const html = await pageRes.text();
+        const titleMatch =
+          html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']*)["']/) ||
+          html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+property=["']og:title["']/);
+        const imageMatch =
+          html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']*)["']/) ||
+          html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+property=["']og:image["']/);
 
-      // Extrai og:title
-      const titleMatch =
-        html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']*)["']/) ||
-        html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+property=["']og:title["']/);
+        title = titleMatch ? titleMatch[1].replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim() : '';
+        image = imageMatch ? imageMatch[1] : '';
 
-      // Extrai og:image
-      const imageMatch =
-        html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']*)["']/) ||
-        html.match(/<meta[^>]+content=["']([^"']*)["'][^>]+property=["']og:image["']/);
-
-      title = titleMatch ? titleMatch[1].replace(/&amp;/g, '&').replace(/&#39;/g, "'").trim() : '';
-      image = imageMatch ? imageMatch[1] : '';
-
-      // Tenta encontrar preço no HTML (R$ seguido de valor)
-      const priceMatches = html.match(/R\$\s*([\d.]+,[\d]{2})/g);
-      if (priceMatches && priceMatches.length > 0) {
-        const raw = priceMatches[0].replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
-        priceNew = parseFloat(raw) || 0;
-        if (priceMatches.length > 1) {
-          const rawOld = priceMatches[1].replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
-          const possibleOld = parseFloat(rawOld) || 0;
-          if (possibleOld > priceNew) priceOld = possibleOld;
+        const priceMatches = html.match(/R\$\s*([\d.]+,[\d]{2})/g);
+        if (priceMatches && priceMatches.length > 0) {
+          const raw = priceMatches[0].replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
+          priceNew = parseFloat(raw) || 0;
+          if (priceMatches.length > 1) {
+            const rawOld = priceMatches[1].replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
+            const possibleOld = parseFloat(rawOld) || 0;
+            if (possibleOld > priceNew) priceOld = possibleOld;
+          }
         }
       }
 

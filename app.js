@@ -172,7 +172,7 @@ function createProductCard(product, isFocused) {
           <div class="btn-ml-icon-wrapper">
             <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
           </div>
-          VER NO MERCADO LIVRE
+          VER NO MERCADO LIVRE (Oferta de Afiliado)
         </a>
       </div>
     `;
