@@ -227,11 +227,6 @@ function createProductCard(product, isFocused) {
       </div>
       
       ${ctaHtml}
-
-      <div class="coupon-box">
-        <span class="coupon-text">🎟️ Cupom aplicado: <strong>FRETEGRATIS</strong></span>
-        <button class="btn-copy-coupon" onclick="copyCoupon(this, 'FRETEGRATIS')">✂️ Copiar</button>
-      </div>
       
       <div class="trust-badges">
         <div class="trust-badge">🔒 Ambiente 100% Seguro</div>
