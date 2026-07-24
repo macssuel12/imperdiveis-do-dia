@@ -158,7 +158,7 @@ function createProductCard(product, isFocused) {
     ctaHtml = `
       <a href="${product.affiliateUrl}" class="btn-cta btn-shopee" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
         <img class="btn-shopee-icon" src="https://img.icons8.com/color/100/shopee.png" alt="Shopee">
-        VER PREÇO NA SHOPEE
+        VER PREÇO NA SHOPEE (Oferta de Afiliado)
       </a>
     `;
   } else if (product.marketplace === 'mercadolivre') {
@@ -184,7 +184,7 @@ function createProductCard(product, isFocused) {
           <path d="M12 3v18m0 0l-6-6m6 6l6-6" />
         </svg>
         <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
-          <span>🛒 VER PRODUTO NA LOJA OFICIAL</span>
+          <span>🛒 VER PRODUTO NA LOJA OFICIAL (Oferta de Afiliado)</span>
         </a>
       </div>
     `;
