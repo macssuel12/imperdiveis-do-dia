@@ -158,7 +158,10 @@ function createProductCard(product, isFocused) {
     ctaHtml = `
       <a href="${product.affiliateUrl}" class="btn-cta btn-shopee" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
         <img class="btn-shopee-icon" src="https://img.icons8.com/color/100/shopee.png" alt="Shopee">
-        VER PREÇO NA SHOPEE (Oferta de Afiliado)
+        <div class="btn-text-container">
+          <span class="btn-main-text">VER PREÇO NA SHOPEE</span>
+          <span class="btn-sub-text">(Oferta de Afiliado)</span>
+        </div>
       </a>
     `;
   } else if (product.marketplace === 'mercadolivre') {
@@ -172,7 +175,10 @@ function createProductCard(product, isFocused) {
           <div class="btn-ml-icon-wrapper">
             <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
           </div>
-          VER NO MERCADO LIVRE (Oferta de Afiliado)
+          <div class="btn-text-container">
+            <span class="btn-main-text">VER NO MERCADO LIVRE</span>
+            <span class="btn-sub-text">(Oferta de Afiliado)</span>
+          </div>
         </a>
       </div>
     `;
@@ -184,7 +190,10 @@ function createProductCard(product, isFocused) {
           <path d="M12 3v18m0 0l-6-6m6 6l6-6" />
         </svg>
         <a href="${product.affiliateUrl}" class="btn-cta btn-generic" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
-          <span>🛒 VER PRODUTO NA LOJA OFICIAL (Oferta de Afiliado)</span>
+          <div class="btn-text-container">
+            <span class="btn-main-text">🛒 VER PRODUTO NA LOJA OFICIAL</span>
+            <span class="btn-sub-text">(Oferta de Afiliado)</span>
+          </div>
         </a>
       </div>
     `;
