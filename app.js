@@ -159,7 +159,7 @@ function createProductCard(product, isFocused) {
       <a href="${product.affiliateUrl}" class="btn-cta btn-shopee" target="_blank" rel="noopener noreferrer" onclick="trackCtaClick('${product.id}', '${product.marketplace}', '${titleEncoded}', ${product.priceNew})">
         <img class="btn-shopee-icon" src="https://img.icons8.com/color/100/shopee.png" alt="Shopee">
         <div class="btn-text-container">
-          <span class="btn-main-text">VER PREÇO NA SHOPEE</span>
+          <span class="btn-main-text">🛒 VER PREÇO NA SHOPEE</span>
           <span class="btn-sub-text">(Oferta de Afiliado)</span>
         </div>
       </a>
@@ -176,7 +176,7 @@ function createProductCard(product, isFocused) {
             <img class="btn-ml-logo-cropped" src="ml-logo.jpg" alt="Mercado Livre">
           </div>
           <div class="btn-text-container">
-            <span class="btn-main-text">VER NO MERCADO LIVRE</span>
+            <span class="btn-main-text">🛒 VER NO MERCADO LIVRE</span>
             <span class="btn-sub-text">(Oferta de Afiliado)</span>
           </div>
         </a>
